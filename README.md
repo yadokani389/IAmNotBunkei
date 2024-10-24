@@ -4,12 +4,13 @@
 ## Setup
 install [nix](https://nixos.org/)
 
-install [cachix](https://nixos.org/) (Optional 入れると無駄にビルドする必要が無くなります)
-
-もしcachix入れたなら
+``$``は無視してください
 ```sh
-$ cachix use yadokani389
+$ mkdir ~/.config/nix -p
+$ cat - > ~/.config/nix/nix.conf
+
 ```
+
 IDEに設定を読み込ませたかったら
 ```sh
 $ nix develop .
@@ -29,6 +30,7 @@ $ nix build .
 ```sh
 $ nix run .
 ```
+もし実行できなかったら``nix develop .``したあとに[公式チュートリアル](https://siv3d.github.io/ja-jp/download/ubuntu/#3-siv3d-%E3%82%92%E3%83%93%E3%83%AB%E3%83%89%E3%81%99%E3%82%8B)に従ってください
 
 # Attention
 formatしてからpushしてね
