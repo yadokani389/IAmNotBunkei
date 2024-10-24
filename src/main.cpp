@@ -73,10 +73,11 @@ void Main()
 	int32 gameTime = 60;
 
 	while (0.0 < gameTime - stopwatch1.s()) {
+		// 残り時間（秒）
+		int32 leftTime = 10;
+		Stopwatch stopwatch2{ StartImmediately::Yes };		
 		while (System::Update()) {
-			// 残り時間（秒）
-			int32 leftTime = 10;
-			Stopwatch stopwatch2{ StartImmediately::Yes };
+			
 			// 青い四角を描く | Draw a rectangle
 			Rect{ 5, 5, 789,180 }.draw(HSV{ 220, 0.8, 0.9 });
 			// 指定した範囲内にテキストを描く | Draw text within a specified area
