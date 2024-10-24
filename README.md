@@ -2,6 +2,8 @@
 
 文化祭の出し物です
 ## Setup
+nix入れたくない人はもし実行できなかったらを見てください
+
 install [nix](https://nixos.org/)
 
 ``$``は無視してください
@@ -30,9 +32,8 @@ $ nix build .
 ```sh
 $ nix run .
 ```
-もし実行できなかったら[公式チュートリアル](https://siv3d.github.io/ja-jp/download/ubuntu/)の必要な依存パッケージをインストールした後
+もし実行できなかったら[公式チュートリアル](https://siv3d.github.io/ja-jp/download/ubuntu/)を見ながらSiv3Dをインストールして必要な依存パッケージをインストールした後
 ```sh
-$ nix develop .
 $ mkdir build && cd build
 $ cmake -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
 $ cd ..
