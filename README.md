@@ -30,7 +30,15 @@ $ nix build .
 ```sh
 $ nix run .
 ```
-もし実行できなかったら``nix develop .``したあとに[公式チュートリアル](https://siv3d.github.io/ja-jp/download/ubuntu/#3-siv3d-%E3%82%92%E3%83%93%E3%83%AB%E3%83%89%E3%81%99%E3%82%8B)に従ってください
+もし実行できなかったら[公式チュートリアル](https://siv3d.github.io/ja-jp/download/ubuntu/)の必要な依存パッケージをインストールした後
+```sh
+$ nix develop .
+$ mkdir build && cd build
+$ cmake -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+$ cd ..
+$ cmake --build build
+$ ./IAmNotBunkei
+```
 
 # Attention
 formatしてからpushしてね
