@@ -71,8 +71,8 @@ void Main() {
   }
 
   Array<Question> elementEasyQuestions = {
-      Question{U"希ガス", true, U"O", 120},
-      Question{U"希ガス", true, U"C", 120},
+      Question{U"希ガス", false, U"H 水素", 120},
+      Question{U"希ガス", true, U"He ヘリウム", 120},
   };
   Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
 
