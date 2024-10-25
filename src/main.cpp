@@ -70,6 +70,12 @@ void Main() {
     }
   }
 
+  Array<Question> elementEasyQuestions = {
+      Question{U"希ガス", true, U"O", 120},
+      Question{U"希ガス", true, U"C", 120},
+  };
+  Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
+
   Stopwatch stopwatch1{StartImmediately::Yes};
   int32 gameTime = 60;
 
@@ -77,10 +83,9 @@ void Main() {
     // 残り時間（秒）
     int32 leftTime = 10;
     Stopwatch stopwatch2{StartImmediately::Yes};
-    Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
     while (System::Update()) {
-      testQuestion.draw();
-      testQuestion.update();
+      elementEasyQuestions[0].draw();
+      elementEasyQuestions[0].update();
 
       if (0.0 < leftTime - stopwatch2.s()) {
         boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);

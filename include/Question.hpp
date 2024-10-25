@@ -4,14 +4,15 @@
 
 class Question {
  public:
-  Question(const String& question, bool answer, const String& string)
-      : m_question(question), m_answer(answer), m_string(string), m_mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}), m_subFont(Font{FontMethod::MSDF, 48}) {}
+  Question(const String& question, bool answer, const String& string, double stringSize)
+      : m_question(question), m_answer(answer), m_string(string), m_stringSize(stringSize), m_mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}), m_subFont(Font{FontMethod::MSDF, 48}) {}
   Question(const String& question, bool answer, const Texture& texture)
       : m_question(question), m_answer(answer), m_texture(texture), m_mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}), m_subFont(Font{FontMethod::MSDF, 48}) {}
 
   const String m_question;
   const bool m_answer;
   const String m_string;
+  const double m_stringSize = 0;
   const Texture m_texture;
   const Font m_mainFont;
   const Font m_subFont;
@@ -26,7 +27,7 @@ class Question {
     if (m_string.isEmpty()) {
       m_texture.draw(Arg::center(400, 390));
     } else {
-      m_mainFont(m_string).draw(45, Arg::center(400, 390), Palette::Black);
+      m_mainFont(m_string).draw(m_stringSize, Arg::center(400, 390), Palette::Black);
     }
 
     // チェックマーク
