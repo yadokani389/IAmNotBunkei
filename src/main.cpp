@@ -1,5 +1,7 @@
 #include <Siv3D.hpp>
 
+#include "Question.hpp"
+
 void Main() {
   Scene::SetResizeMode(ResizeMode::Keep);
   Window::SetStyle(WindowStyle::Sizable);
@@ -75,19 +77,10 @@ void Main() {
     // 残り時間（秒）
     int32 leftTime = 10;
     Stopwatch stopwatch2{StartImmediately::Yes};
+    Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
     while (System::Update()) {
-      // 青い四角を描く | Draw a rectangle
-      Rect{5, 5, 789, 180}.draw(HSV{220, 0.8, 0.9});
-      // 指定した範囲内にテキストを描く | Draw text within a specified area
-      regularFont1(U"の画像をすべて選択してください").draw(25, Vec2{30, 110}, Palette::White);
+      testQuestion.draw();
 
-      // チェックマーク
-      Rect{200, 190, 400, 400}.draw(ColorF{0.7});
-      Circle{240, 230, 40}.draw(ColorF{0, 0.47, 0.78});
-      Line{205, 216, 230, 250}.draw(6, Palette::White);
-      Line{230, 250, 269, 207}.draw(6, Palette::White);
-
-      boldFont(U"プログラミング言語のロゴ").draw(45, Vec2{30, 35}, Palette::White);
       if (0.0 < leftTime - stopwatch2.s()) {
         boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
       }

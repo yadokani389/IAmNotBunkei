@@ -15,6 +15,11 @@ add_executable(IAmNotBunkei
   src/main.cpp
 )
 
+target_include_directories(IAmNotBunkei
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
 find_package(Siv3D)
 target_link_libraries(IAmNotBunkei PUBLIC Siv3D::Siv3D)
 
