@@ -1,5 +1,7 @@
 #include <Siv3D.hpp>
 
+#include "Question.hpp"
+
 bool SelectButton(const int centerx, const int centery, const Texture& texture, const bool& Selected) {
   const int width = texture.width();
   const int height = texture.height();
@@ -95,6 +97,12 @@ void Main() {
     }
   }
 
+  Array<Question> elementEasyQuestions = {
+      Question{U"希ガス", true, U"O", 120},
+      Question{U"希ガス", true, U"C", 120},
+  };
+  Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
+
   Stopwatch stopwatch1{StartImmediately::Yes};
   int32 gameTime = 60;
 
@@ -110,18 +118,9 @@ void Main() {
     int32 leftTime = 10;
     Stopwatch stopwatch2{StartImmediately::Yes};
     while (System::Update()) {
-      // 青い四角を描く | Draw a rectangle
-      Rect{5, 5, 789, 180}.draw(HSV{220, 0.8, 0.9});
-      // 指定した範囲内にテキストを描く | Draw text within a specified area
-      regularFont1(U"の画像をすべて選択してください").draw(25, Vec2{30, 110}, Palette::White);
+      elementEasyQuestions[0].draw();
+      elementEasyQuestions[0].update();
 
-      // チェックマーク
-      Rect{200, 190, 400, 400}.draw(ColorF{0.7});
-      Circle{240, 230, 40}.draw(ColorF{0, 0.47, 0.78});
-      Line{205, 216, 230, 250}.draw(6, Palette::White);
-      Line{230, 250, 269, 207}.draw(6, Palette::White);
-
-      boldFont(U"プログラミング言語のロゴ").draw(45, Vec2{30, 35}, Palette::White);
       if (0.0 < leftTime - stopwatch2.s()) {
         boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
       }
