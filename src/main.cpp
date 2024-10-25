@@ -85,8 +85,9 @@ void Main()
 
 
 			Rect{ 200, 190, 400,400 }.draw(ColorF{ 0.7 });
-
-			Circle{ 240, 230, 40 }.draw(ColorF{ 0.58,0.94,0.9 });
+      Circle{240, 230, 40}.draw(ColorF{0, 0.47, 0.78});
+			Line{205, 216, 230, 250}.draw(6, Palette::White);
+			Line{230, 250, 269, 207}.draw(6, Palette::White);
 
 			boldFont(U"プログラミング言語のロゴ")
 				.draw(45, Vec2{ 30, 35 }, Palette::White);
