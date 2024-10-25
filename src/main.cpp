@@ -80,6 +80,7 @@ void Main() {
     Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
     while (System::Update()) {
       testQuestion.draw();
+      testQuestion.update();
 
       if (0.0 < leftTime - stopwatch2.s()) {
         boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);

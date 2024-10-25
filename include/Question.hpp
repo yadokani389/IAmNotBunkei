@@ -37,6 +37,12 @@ class Question {
     }
   }
 
+  inline void update() {
+    if (KeyEnter.down()) {
+      m_isSelected = true;
+    }
+  }
+
  private:
   bool m_isSelected = false;
 };
