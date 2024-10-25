@@ -79,19 +79,30 @@ void Main() {
   Stopwatch stopwatch1{StartImmediately::Yes};
   int32 gameTime = 60;
 
-  while (0.0 < gameTime - stopwatch1.s()) {
+  size_t index = 0;
+  while (stopwatch1.s() < gameTime) {
     // 残り時間（秒）
     int32 leftTime = 10;
     Stopwatch stopwatch2{StartImmediately::Yes};
-    while (System::Update()) {
-      elementEasyQuestions[0].draw();
-      elementEasyQuestions[0].update();
 
-      if (0.0 < leftTime - stopwatch2.s()) {
+    while (System::Update()) {
+      elementEasyQuestions[index].draw();
+      elementEasyQuestions[index].update();
+
+      if (leftTime <= stopwatch2.s() || elementEasyQuestions[index].m_timer.reachedZero()) {
+        index++;
+        break;
+      } else {
         boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
       }
+
       ClearPrint();
       Print << Cursor::Pos().x << Cursor::Pos().y;
+      Print << stopwatch2.s();
     }
+    if (elementEasyQuestions.size() <= index)
+      break;
+
+    Console << U"次の問題へ";
   }
 }
