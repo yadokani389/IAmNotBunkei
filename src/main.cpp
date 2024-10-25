@@ -1,5 +1,25 @@
 #include <Siv3D.hpp>
 
+bool SelectButton(const int centerx, const int centery, const Texture& texture, const bool& Selected) {
+  const int width = texture.width();
+  const int height = texture.height();
+  Rect buttonRect(centerx - width / 2, centery - height / 2, width, height);
+  bool isMouseOver = buttonRect.mouseOver();
+  bool isClicked = buttonRect.leftClicked();
+
+  texture.drawAt({centerx, centery});
+
+  if (isClicked || Selected) {
+    buttonRect.draw(ColorF{1.0, 1.0, 1.0, 0.5});
+    Line{centerx - width / 2 + 8, centery - height / 2 + 18, centerx - width / 2 + 15, centery - height / 2 + 25}
+        .draw(3, Palette::Lightgreen);
+    Line{centerx - width / 2 + 15, centery - height / 2 + 25, centerx - width / 2 + 32, centery - height / 2 + 8}
+        .draw(3, Palette::Lightgreen);
+  }
+
+  return isClicked || Selected;
+}
+
 void Main() {
   Scene::SetResizeMode(ResizeMode::Keep);
   Window::SetStyle(WindowStyle::Sizable);
@@ -71,6 +91,13 @@ void Main() {
   Stopwatch stopwatch1{StartImmediately::Yes};
   int32 gameTime = 60;
 
+  // テスト用
+  String path = U"";
+  Image image{path};
+  Texture texture{image};
+  bool selected = false;
+  // テスト用
+
   while (0.0 < gameTime - stopwatch1.s()) {
     // 残り時間（秒）
     int32 leftTime = 10;
@@ -91,6 +118,8 @@ void Main() {
       if (0.0 < leftTime - stopwatch2.s()) {
         boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
       }
+
+      selected = SelectButton(420, 320, texture, selected);
       ClearPrint();
       Print << Cursor::Pos().x << Cursor::Pos().y;
     }
