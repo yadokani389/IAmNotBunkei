@@ -74,6 +74,23 @@ void Main() {
       Question{U"希ガス", false, U"H 水素", 120},
       Question{U"希ガス", true, U"He ヘリウム", 120},
   };
+  Array<Question> elementNomalQuestions = {
+      Question{U"アルカリ金属(１族)", true, U"Li リチウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Na ナトリウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"K カリウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Rb ルビジウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Cs セシウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Fr フランシウム", 120},
+
+      Question{U"アルカリ金属(１族)", false, U"H 水素", 120},
+      Question{U"アルカリ金属(１族)", false, U"Mg マグネシウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Ba バリウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Nb ニオブ", 120},
+      Question{U"アルカリ金属(１族)", false, U"Po ポロニウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Nh ニホニウム", 120},
+
+      Question{U"アルカリ金属(１族)", false, U"Sb アンチモン", 120},
+  };
   Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
 
   Stopwatch stopwatch1{StartImmediately::Yes};
