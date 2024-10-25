@@ -1,6 +1,9 @@
 #include <Siv3D.hpp>
 
 void Main() {
+  Scene::SetResizeMode(ResizeMode::Keep);
+  Window::SetStyle(WindowStyle::Sizable);
+  Window::Resize(640, 480);
   // 背景の色を設定する | Set the background color
   Scene::SetBackground(Palette::White);
   // 太文字のフォントを作成する | Create a bold font with MSDF method
@@ -78,6 +81,7 @@ void Main() {
       // 指定した範囲内にテキストを描く | Draw text within a specified area
       regularFont1(U"の画像をすべて選択してください").draw(25, Vec2{30, 110}, Palette::White);
 
+      // チェックマーク
       Rect{200, 190, 400, 400}.draw(ColorF{0.7});
       Circle{240, 230, 40}.draw(ColorF{0, 0.47, 0.78});
       Line{205, 216, 230, 250}.draw(6, Palette::White);
