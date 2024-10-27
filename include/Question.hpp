@@ -2,8 +2,7 @@
 
 #include <Siv3D.hpp>
 
-class Question {
- public:
+struct Question {
   Question(const String& question, bool answer, const String& string, double stringSize)
       : m_question(question), m_answer(answer), m_string(string), m_stringSize(stringSize), m_mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}), m_subFont(Font{FontMethod::MSDF, 48}) {}
   Question(const String& question, bool answer, const Texture& texture)
@@ -16,6 +15,8 @@ class Question {
   const Texture m_texture;
   const Font m_mainFont;
   const Font m_subFont;
+  bool m_isSelected = false;
+  Timer m_timer{SecondsF{0.5}, StartImmediately::No};
 
   inline void draw() const {
     // 青い四角を描く | Draw a rectangle
@@ -41,9 +42,7 @@ class Question {
   inline void update() {
     if (KeyEnter.down()) {
       m_isSelected = true;
+      m_timer.start();
     }
   }
-
- private:
-  bool m_isSelected = false;
 };

@@ -2,6 +2,30 @@
 
 #include "Question.hpp"
 
+// 互いに素か判定
+bool Coprime(int a, int b) {
+  return Math::GCD(a, b) == 1;
+}
+
+// 互いに異なる2つの数字を出す a, bどちらかは奇数
+std::pair<int, int> Rnd(int level) {
+  int lim;
+  lim = level * level * 200;
+  int a = Random(2, lim);
+  int b = Random(2, lim);
+  if (IsEven(a)) {
+    while (a == b || IsEven(b)) {
+      b = Random(3, 200);
+    }
+  } else {
+    while (a == b) {
+      b = Random(lim - 180, lim);
+    }
+  }
+
+  return std::make_pair(a, b);
+}
+
 void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
   bool start = false;
   constexpr double SeventInterval = 1.0;
@@ -76,28 +100,97 @@ void Main() {
   StartMenu(level, boldFont, regularFont2);
 
   Array<Question> elementEasyQuestions = {
-      Question{U"希ガス", true, U"O", 120},
-      Question{U"希ガス", true, U"C", 120},
+      Question{U"希ガス", true, U"He ヘリウム", 120},
+      Question{U"希ガス", true, U"Ne ネオン", 120},
+      Question{U"希ガス", true, U"Kr クリプトン", 120},
+      Question{U"希ガス", true, U"Xe キセノン", 120},
+      Question{U"希ガス", true, U"Rm ラドン", 120},
+      Question{U"希ガス", true, U"Rm アルゴン", 120},
+
+      Question{U"希ガス", false, U"H 水素", 120},
+      Question{U"希ガス", false, U"Ti チタン", 120},
+      Question{U"希ガス", true, U"W タングステン", 120},
+      Question{U"希ガス", false, U"Li リチウム", 120},
+      Question{U"希ガス", false, U"C 炭素", 120},
+      Question{U"希ガス", false, U"N 窒素", 120},
+      Question{U"希ガス", false, U"Na ナトリウム", 120},
+      Question{U"希ガス", false, U"Ca カルシウム", 120},
+      Question{U"希ガス", false, U"Al アルミニウム", 120},
+  };
+  Array<Question> elementNomalQuestions = {
+      Question{U"アルカリ金属(１族)", true, U"Li リチウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Na ナトリウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"K カリウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Rb ルビジウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Cs セシウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Fr フランシウム", 120},
+
+      Question{U"アルカリ金属(１族)", false, U"H 水素", 120},
+      Question{U"アルカリ金属(１族)", false, U"Mg マグネシウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Ba バリウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Nb ニオブ", 120},
+      Question{U"アルカリ金属(１族)", false, U"Po ポロニウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Nh ニホニウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Sb アンチモン", 120},
+  };
+  Array<Question> elementHardQuestions = {
+      Question{U"ランタノイド元素", true, U"Ce セリウム", 120},
+      Question{U"ランタノイド元素", true, U"Pr プラセオジム", 120},
+      Question{U"ランタノイド元素", true, U"Nd ネオジム", 120},
+      Question{U"ランタノイド元素", true, U"Pm プロメチウム", 120},
+      Question{U"ランタノイド元素", true, U"Sm サマリウム", 120},
+      Question{U"ランタノイド元素", true, U"Eu ユウロビウム", 120},
+      Question{U"ランタノイド元素", true, U"Gd ガドリニウム", 120},
+      Question{U"ランタノイド元素", true, U"Tb テルビウム", 120},
+      Question{U"ランタノイド元素", true, U"Dy ジスプロニウム", 120},
+      Question{U"ランタノイド元素", true, U"Ho ホルミウム", 120},
+      Question{U"ランタノイド元素", true, U"Er エルビウム", 120},
+      Question{U"ランタノイド元素", true, U"Er ツリウム", 120},
+      Question{U"ランタノイド元素", true, U"Yb イッテルビウム", 120},
+      Question{U"ランタノイド元素", true, U"Er ルテチウム", 120},
+
+      Question{U"ランタノイド元素", false, U"Np ネプツニウム", 120},
+      Question{U"ランタノイド元素", false, U"Am アメリシウム", 120},
+      Question{U"ランタノイド元素", true, U"Cf カリホルニウム", 120},
+      Question{U"ランタノイド元素", false, U"Fm フェルミウム", 120},
+      Question{U"ランタノイド元素", false, U"Lr ローレンシウム", 120},
+      Question{U"ランタノイド元素", false, U"Md メンデレビウム", 120},
+      Question{U"ランタノイド元素", false, U"Lv リバボリウム", 120},
+      Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 120},
+      Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
   };
   Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
+
+  auto [a, b] = Rnd(level);
+  Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
 
   Stopwatch stopwatch1{StartImmediately::Yes};
   int32 gameTime = 60;
 
-  while (0.0 < gameTime - stopwatch1.s()) {
+  size_t index = 0;
+  while (stopwatch1.s() < gameTime) {
     // 残り時間（秒）
     int32 leftTime = 10;
     Stopwatch stopwatch2{StartImmediately::Yes};
-    while (System::Update()) {
-      elementEasyQuestions[0].draw();
-      elementEasyQuestions[0].update();
 
-      if (0.0 < leftTime - stopwatch2.s()) {
+    while (System::Update()) {
+      elementEasyQuestions[index].draw();
+      elementEasyQuestions[index].update();
+
+      if (leftTime <= stopwatch2.s() || elementEasyQuestions[index].m_timer.reachedZero()) {
+        index++;
+        break;
+      } else {
         boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
       }
 
       ClearPrint();
       Print << Cursor::Pos().x << Cursor::Pos().y;
+      Print << stopwatch2.s();
     }
+    if (elementEasyQuestions.size() <= index)
+      break;
+
+    Console << U"次の問題へ";
   }
 }
