@@ -103,6 +103,13 @@ void Main() {
   // スタート画面
   StartMenu(level, boldFont, regularFont2);
 
+  // Audio関係
+  const Audio CorrectSound = Audio(U"resources/sounds/Quiz-Correct_Answer01-1.mp3");
+  const Audio WrongSound = Audio(U"resources/sounds/Quiz-Wrong_Buzzer02-2.mp3");
+  // for mac
+  // const Audio CorrectSound = Audio(U"engine/resources/sounds/Quiz-Correct_Answer01-1.mp3");
+  // const Audio WrongSound = Audio(U"engine/resources/sounds/Quiz-Wrong_Buzzer02-2.mp3");
+
   Array<Question> elementEasyQuestions = {
       Question{U"希ガス", true, U"He ヘリウム", 120},
       Question{U"希ガス", true, U"Ne ネオン", 120},
@@ -184,8 +191,12 @@ void Main() {
         break;
     }
 
-    if (elementEasyQuestions[index].isCorrect())
+    if (elementEasyQuestions[index].isCorrect()) {
       point++;
+      CorrectSound.playOneShot();
+    } else {
+      WrongSound.playOneShot();
+    }
 
     index++;
     Console << U"次の問題へ";
