@@ -135,6 +135,7 @@ void Main() {
       Question{U"アルカリ金属(１族)", false, U"Nb ニオブ", 120},
       Question{U"アルカリ金属(１族)", false, U"Po ポロニウム", 120},
       Question{U"アルカリ金属(１族)", false, U"Nh ニホニウム", 120},
+<<<<<<< HEAD
       Question{U"アルカリ金属(１族)", false, U"Sb アンチモン", 120},
   };
   Array<Question> elementHardQuestions = {
@@ -164,6 +165,11 @@ void Main() {
       Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
   };
 
+=======
+
+      Question{U"アルカリ金属(１族)", false, U"Sb アンチモン", 120},
+  };
+>>>>>>> 6cbe490891a4268bbd25ba07c13cc120706a0ecd
   Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
 
   int a, b;
