@@ -2,6 +2,30 @@
 
 #include "Question.hpp"
 
+// 互いに素か判定
+bool Coprime(int a, int b) {
+  return Math::GCD(a, b) == 1;
+}
+
+// 互いに異なる2つの数字を出す a, bどちらかは奇数
+std::pair<int, int> Rnd(int level) {
+  int lim;
+  lim = level * level * 200;
+  int a = Random(2, lim);
+  int b = Random(2, lim);
+  if (IsEven(a)) {
+    while (a == b || IsEven(b)) {
+      b = Random(3, 200);
+    }
+  } else {
+    while (a == b) {
+      b = Random(lim - 180, lim);
+    }
+  }
+
+  return std::make_pair(a, b);
+}
+
 void Main() {
   Scene::SetResizeMode(ResizeMode::Keep);
   Window::SetStyle(WindowStyle::Sizable);
@@ -16,7 +40,7 @@ void Main() {
   const Font emojiFont{48, Typeface::ColorEmoji};
   boldFont.addFallback(emojiFont);
 
-  int type = 1;  // レベルの変数
+  int level = 1;  // レベルの変数
 
   const double SeventInterval = 1.0;
   double SaccumulatedTime = 0.0;
@@ -25,22 +49,22 @@ void Main() {
   // スタート画面
   while (System::Update()) {
     if (Key1.down()) {
-      type = 1;
+      level = 1;
     } else if (Key2.down()) {
-      type = 2;
+      level = 2;
     } else if (Key3.down()) {
-      type = 3;
+      level = 3;
     } else if (Key4.down()) {
-      type = 4;
+      level = 4;
     }
 
-    if (type == 1)
+    if (level == 1)
       boldFont(U"EASY").draw(100, Vec2{50, 60}, ColorF{0.85, 0.6, 0.73});
-    else if (type == 2)
+    else if (level == 2)
       boldFont(U"NORMAL").draw(100, Vec2{50, 60}, ColorF{0.3, 0.56, 0.23});
-    else if (type == 3)
+    else if (level == 3)
       boldFont(U"HARD").draw(100, Vec2{50, 60}, ColorF{0.68, 0.26, 0.15});
-    else if (type == 4)
+    else if (level == 4)
       boldFont(U"INSANE").draw(100, Vec2{50, 60}, ColorF{0.36, 0.06, 0.45});
 
     // スタート用
@@ -71,10 +95,69 @@ void Main() {
   }
 
   Array<Question> elementEasyQuestions = {
-      Question{U"希ガス", true, U"O", 120},
-      Question{U"希ガス", true, U"C", 120},
+      Question{U"希ガス", true, U"He ヘリウム", 120},
+      Question{U"希ガス", true, U"Ne ネオン", 120},
+      Question{U"希ガス", true, U"Kr クリプトン", 120},
+      Question{U"希ガス", true, U"Xe キセノン", 120},
+      Question{U"希ガス", true, U"Rm ラドン", 120},
+      Question{U"希ガス", true, U"Rm アルゴン", 120},
+
+      Question{U"希ガス", false, U"H 水素", 120},
+      Question{U"希ガス", false, U"Ti チタン", 120},
+      Question{U"希ガス", true, U"W タングステン", 120},
+      Question{U"希ガス", false, U"Li リチウム", 120},
+      Question{U"希ガス", false, U"C 炭素", 120},
+      Question{U"希ガス", false, U"N 窒素", 120},
+      Question{U"希ガス", false, U"Na ナトリウム", 120},
+      Question{U"希ガス", false, U"Ca カルシウム", 120},
+      Question{U"希ガス", false, U"Al アルミニウム", 120},
+  };
+  Array<Question> elementNomalQuestions = {
+      Question{U"アルカリ金属(１族)", true, U"Li リチウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Na ナトリウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"K カリウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Rb ルビジウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Cs セシウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Fr フランシウム", 120},
+
+      Question{U"アルカリ金属(１族)", false, U"H 水素", 120},
+      Question{U"アルカリ金属(１族)", false, U"Mg マグネシウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Ba バリウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Nb ニオブ", 120},
+      Question{U"アルカリ金属(１族)", false, U"Po ポロニウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Nh ニホニウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Sb アンチモン", 120},
+  };
+  Array<Question> elementHardQuestions = {
+      Question{U"ランタノイド元素", true, U"Ce セリウム", 120},
+      Question{U"ランタノイド元素", true, U"Pr プラセオジム", 120},
+      Question{U"ランタノイド元素", true, U"Nd ネオジム", 120},
+      Question{U"ランタノイド元素", true, U"Pm プロメチウム", 120},
+      Question{U"ランタノイド元素", true, U"Sm サマリウム", 120},
+      Question{U"ランタノイド元素", true, U"Eu ユウロビウム", 120},
+      Question{U"ランタノイド元素", true, U"Gd ガドリニウム", 120},
+      Question{U"ランタノイド元素", true, U"Tb テルビウム", 120},
+      Question{U"ランタノイド元素", true, U"Dy ジスプロニウム", 120},
+      Question{U"ランタノイド元素", true, U"Ho ホルミウム", 120},
+      Question{U"ランタノイド元素", true, U"Er エルビウム", 120},
+      Question{U"ランタノイド元素", true, U"Er ツリウム", 120},
+      Question{U"ランタノイド元素", true, U"Yb イッテルビウム", 120},
+      Question{U"ランタノイド元素", true, U"Er ルテチウム", 120},
+
+      Question{U"ランタノイド元素", false, U"Np ネプツニウム", 120},
+      Question{U"ランタノイド元素", false, U"Am アメリシウム", 120},
+      Question{U"ランタノイド元素", true, U"Cf カリホルニウム", 120},
+      Question{U"ランタノイド元素", false, U"Fm フェルミウム", 120},
+      Question{U"ランタノイド元素", false, U"Lr ローレンシウム", 120},
+      Question{U"ランタノイド元素", false, U"Md メンデレビウム", 120},
+      Question{U"ランタノイド元素", false, U"Lv リバボリウム", 120},
+      Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 120},
+      Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
   };
   Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
+
+  auto [a, b] = Rnd(level);
+  Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
 
   Stopwatch stopwatch1{StartImmediately::Yes};
   int32 gameTime = 60;
