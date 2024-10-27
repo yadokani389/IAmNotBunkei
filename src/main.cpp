@@ -2,28 +2,17 @@
 
 #include "Question.hpp"
 
-int Gcd(int a, int b)  // 公約数
-{
-  while (not(b == 0)) {
-    int tmp = b;
-    b = a % b;
-    a = tmp;
-  }
-  return a;
+// 互いに素か判定
+bool Coprime(int a, int b) {
+  return Math::GCD(a, b) == 1;
 }
-bool Coprime(int a, int b)  // 互いに素か判定
-{
-  if (Gcd(a, b) == 1) {
-    return true;
-  } else {
-    return false;
-  }
-}
-void Rnd(int a, int b, int level)  // 互いに異なる2つの数字を出す　a,bどちらかは奇数
-{
+
+// 互いに異なる2つの数字を出す a, bどちらかは奇数
+std::pair<int, int> Rnd(int level) {
   int lim;
   lim = level * level * 200;
-  a = Random(2, lim);
+  int a = Random(2, lim);
+  int b = Random(2, lim);
   if (IsEven(a)) {
     while (a == b || IsEven(b)) {
       b = Random(3, 200);
@@ -33,6 +22,8 @@ void Rnd(int a, int b, int level)  // 互いに異なる2つの数字を出す�
       b = Random(lim - 180, lim);
     }
   }
+
+  return std::make_pair(a, b);
 }
 
 void Main() {
@@ -49,7 +40,7 @@ void Main() {
   const Font emojiFont{48, Typeface::ColorEmoji};
   boldFont.addFallback(emojiFont);
 
-  int type = 1;  // レベルの変数
+  int level = 1;  // レベルの変数
 
   const double SeventInterval = 1.0;
   double SaccumulatedTime = 0.0;
@@ -58,22 +49,22 @@ void Main() {
   // スタート画面
   while (System::Update()) {
     if (Key1.down()) {
-      type = 1;
+      level = 1;
     } else if (Key2.down()) {
-      type = 2;
+      level = 2;
     } else if (Key3.down()) {
-      type = 3;
+      level = 3;
     } else if (Key4.down()) {
-      type = 4;
+      level = 4;
     }
 
-    if (type == 1)
+    if (level == 1)
       boldFont(U"EASY").draw(100, Vec2{50, 60}, ColorF{0.85, 0.6, 0.73});
-    else if (type == 2)
+    else if (level == 2)
       boldFont(U"NORMAL").draw(100, Vec2{50, 60}, ColorF{0.3, 0.56, 0.23});
-    else if (type == 3)
+    else if (level == 3)
       boldFont(U"HARD").draw(100, Vec2{50, 60}, ColorF{0.68, 0.26, 0.15});
-    else if (type == 4)
+    else if (level == 4)
       boldFont(U"INSANE").draw(100, Vec2{50, 60}, ColorF{0.36, 0.06, 0.45});
 
     // スタート用
@@ -135,7 +126,6 @@ void Main() {
       Question{U"アルカリ金属(１族)", false, U"Nb ニオブ", 120},
       Question{U"アルカリ金属(１族)", false, U"Po ポロニウム", 120},
       Question{U"アルカリ金属(１族)", false, U"Nh ニホニウム", 120},
-<<<<<<< HEAD
       Question{U"アルカリ金属(１族)", false, U"Sb アンチモン", 120},
   };
   Array<Question> elementHardQuestions = {
@@ -164,16 +154,9 @@ void Main() {
       Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 120},
       Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
   };
-
-=======
-
-      Question{U"アルカリ金属(１族)", false, U"Sb アンチモン", 120},
-  };
->>>>>>> 6cbe490891a4268bbd25ba07c13cc120706a0ecd
   Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
 
-  int a, b;
-  Rnd(a, b, type);
+  auto [a, b] = Rnd(level);
   Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
 
   Stopwatch stopwatch1{StartImmediately::Yes};
