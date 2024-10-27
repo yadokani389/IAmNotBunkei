@@ -39,7 +39,8 @@ struct Question {
       // グレーの四角の描画
       Point rectTopLeft;
       if (m_string.isEmpty()) {
-        Rect rect{300, 340, 200, 100};
+        const Size textureSize = m_texture.size();
+        Rect rect{textureSize};
         rect.setCenter(400, 390).draw(ColorF{0.5, 0.5, 0.5, 0.5});
         rectTopLeft = rect.tl();
       } else {
