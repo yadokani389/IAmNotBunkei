@@ -2,48 +2,28 @@
 
 #include "Question.hpp"
 
-bool SelectButton(const int centerx, const int centery, const Texture& texture, const bool& Selected) {
-  const int width = texture.width();
-  const int height = texture.height();
-  Rect buttonRect(centerx - width / 2, centery - height / 2, width, height);
-  bool isMouseOver = buttonRect.mouseOver();
-  bool isClicked = buttonRect.leftClicked();
-
-  texture.drawAt({centerx, centery});
-
-  if (isClicked || Selected) {
-    buttonRect.draw(ColorF{1.0, 1.0, 1.0, 0.5});
-    Line{centerx - width / 2 + 8, centery - height / 2 + 18, centerx - width / 2 + 15, centery - height / 2 + 25}
-        .draw(3, Palette::Lightgreen);
-    Line{centerx - width / 2 + 15, centery - height / 2 + 25, centerx - width / 2 + 32, centery - height / 2 + 8}
-        .draw(3, Palette::Lightgreen);
-  }
-
-  return isClicked || Selected;
-}
-
-void StartMenu(int type, const Font& boldFont, const Font& regularFont2) {
+void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
   bool start = false;
   constexpr double SeventInterval = 1.0;
   double SaccumulatedTime = 0.0;
   while (System::Update()) {
     if (Key1.down()) {
-      type = 1;
+      level = 1;
     } else if (Key2.down()) {
-      type = 2;
+      level = 2;
     } else if (Key3.down()) {
-      type = 3;
+      level = 3;
     } else if (Key4.down()) {
-      type = 4;
+      level = 4;
     }
 
-    if (type == 1)
+    if (level == 1)
       boldFont(U"EASY").draw(100, Vec2{50, 60}, ColorF{0.85, 0.6, 0.73});
-    else if (type == 2)
+    else if (level == 2)
       boldFont(U"NORMAL").draw(100, Vec2{50, 60}, ColorF{0.3, 0.56, 0.23});
-    else if (type == 3)
+    else if (level == 3)
       boldFont(U"HARD").draw(100, Vec2{50, 60}, ColorF{0.68, 0.26, 0.15});
-    else if (type == 4)
+    else if (level == 4)
       boldFont(U"INSANE").draw(100, Vec2{50, 60}, ColorF{0.36, 0.06, 0.45});
 
     // スタート用
@@ -90,10 +70,10 @@ void Main() {
   const Font emojiFont{48, Typeface::ColorEmoji};
   boldFont.addFallback(emojiFont);
 
-  int type = 1;  // レベルの変数
+  int level = 1;  // レベルの変数
 
   // スタート画面
-  StartMenu(type, boldFont, regularFont2);
+  StartMenu(level, boldFont, regularFont2);
 
   Array<Question> elementEasyQuestions = {
       Question{U"希ガス", true, U"O", 120},
@@ -103,13 +83,6 @@ void Main() {
 
   Stopwatch stopwatch1{StartImmediately::Yes};
   int32 gameTime = 60;
-
-  // テスト用
-  String path = U"";
-  Image image{path};
-  Texture texture{image};
-  bool selected = false;
-  // テスト用
 
   while (0.0 < gameTime - stopwatch1.s()) {
     // 残り時間（秒）
@@ -123,7 +96,6 @@ void Main() {
         boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
       }
 
-      selected = SelectButton(420, 320, texture, selected);
       ClearPrint();
       Print << Cursor::Pos().x << Cursor::Pos().y;
     }
