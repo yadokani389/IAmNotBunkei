@@ -39,8 +39,7 @@ std::pair<String, Color> GetLevelInfo(int level) {
 
 void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
   bool start = false;
-  constexpr double SeventInterval = 1.0;
-  double SaccumulatedTime = 0.0;
+  Timer timer{Seconds{1}};
   while (System::Update()) {
     if (Key1.down()) {
       level = 1;
@@ -71,14 +70,14 @@ void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
 
     if (KeyEnter.down()) {
       start = true;
+      timer.start();
     }
 
     // スタート後のアニメーション
     if (start) {
       Line{58, 285, 112, 345}.draw(10, Palette::Green);
       Line{210, 241, 112, 345}.draw(10, Palette::Green);
-      SaccumulatedTime += Scene::DeltaTime();
-      if (SeventInterval <= SaccumulatedTime)
+      if (timer.reachedZero())
         break;
     }
   }
@@ -175,13 +174,12 @@ void Main() {
   auto [a, b] = Rnd(level);
   Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
 
-  Stopwatch stopwatch1{StartImmediately::Yes};
-  int32 gameTime = 60;
+  Timer gameTimer{Seconds{60}, StartImmediately::Yes};
 
   // ゲーム画面
   size_t index = 0;
   size_t point = 0;
-  while (stopwatch1.s() < gameTime && index < elementEasyQuestions.size()) {
+  while (!gameTimer.reachedZero() && index < elementEasyQuestions.size()) {
     elementEasyQuestions[index].start();
     while (System::Update()) {
       elementEasyQuestions[index].draw();
