@@ -184,8 +184,11 @@ void Main() {
         break;
     }
 
-    if (elementEasyQuestions[index].isCorrect())
+    if (elementEasyQuestions[index].isCorrect()){
       point++;
+    } else {
+      
+    }
 
     index++;
     Console << U"次の問題へ";
