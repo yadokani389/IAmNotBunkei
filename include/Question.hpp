@@ -47,12 +47,15 @@ struct Question {
     m_timer.start();
   }
 
-  inline void
-  update() {
+  inline void update() {
     if (KeyEnter.down()) {
       m_isSelected = true;
       if (0.5 < m_timer.sF())
         m_timer.setRemaining(SecondsF{0.5});
     }
+  }
+
+  inline bool isCorrect() {
+    return m_answer == m_isSelected;
   }
 };

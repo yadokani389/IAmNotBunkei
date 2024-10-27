@@ -26,6 +26,17 @@ std::pair<int, int> Rnd(int level) {
   return std::make_pair(a, b);
 }
 
+std::pair<String, Color> GetLevelInfo(int level) {
+  if (level == 1)
+    return std::make_pair(U"EASY", ColorF{0.85, 0.6, 0.73});
+  else if (level == 2)
+    return std::make_pair(U"NORMAL", ColorF{0.3, 0.56, 0.23});
+  else if (level == 3)
+    return std::make_pair(U"HARD", ColorF{0.68, 0.26, 0.15});
+  else
+    return std::make_pair(U"INSANE", ColorF{0.36, 0.06, 0.45});
+}
+
 void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
   bool start = false;
   constexpr double SeventInterval = 1.0;
@@ -41,14 +52,7 @@ void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
       level = 4;
     }
 
-    if (level == 1)
-      boldFont(U"EASY").draw(100, Vec2{50, 60}, ColorF{0.85, 0.6, 0.73});
-    else if (level == 2)
-      boldFont(U"NORMAL").draw(100, Vec2{50, 60}, ColorF{0.3, 0.56, 0.23});
-    else if (level == 3)
-      boldFont(U"HARD").draw(100, Vec2{50, 60}, ColorF{0.68, 0.26, 0.15});
-    else if (level == 4)
-      boldFont(U"INSANE").draw(100, Vec2{50, 60}, ColorF{0.36, 0.06, 0.45});
+    boldFont(GetLevelInfo(level).first).draw(100, Vec2{50, 60}, GetLevelInfo(level).second);
 
     // スタート用
     RoundRect{40, 240, 650, 200, 10}.draw(ColorF{0.97, 0.97, 0.97});
@@ -167,22 +171,48 @@ void Main() {
   Stopwatch stopwatch1{StartImmediately::Yes};
   int32 gameTime = 60;
 
+  // ゲーム画面
   size_t index = 0;
+  size_t point = 0;
   while (stopwatch1.s() < gameTime && index < elementEasyQuestions.size()) {
     elementEasyQuestions[index].start();
     while (System::Update()) {
       elementEasyQuestions[index].draw();
       elementEasyQuestions[index].update();
 
-      if (elementEasyQuestions[index].m_timer.reachedZero()) {
-        index++;
+      if (elementEasyQuestions[index].m_timer.reachedZero())
         break;
-      }
-
-      ClearPrint();
-      Print << Cursor::Pos().x << Cursor::Pos().y;
     }
 
+    if (elementEasyQuestions[index].isCorrect())
+      point++;
+
+    index++;
     Console << U"次の問題へ";
+  }
+
+  Console << U"リザルト画面";
+  // リザルト画面
+  while (System::Update()) {
+    String rankText = U"";
+
+    if (point < 5)
+      rankText = U"文系？";
+    else if (point < 10)
+      rankText = U"ちょっと理系";
+    else if (point < 15)
+      rankText = U"まぁまぁ理系";
+    else if (point < 20)
+      rankText = U"理系";
+    else if (point < 25)
+      rankText = U"伝説の理系";
+    else
+      rankText = U"TOP OF 理系";
+
+    auto xAdvance = static_cast<int>(boldFont(U"難易度:  ").getXAdvances(50).sum());
+    boldFont(U"難易度:  ").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4), Palette::Black);
+    boldFont(GetLevelInfo(level).first).draw(50, Arg::leftCenter(Scene::Height() / 4 + xAdvance, Scene::Height() / 4), GetLevelInfo(level).second);
+    boldFont(U"スコア:  ", point).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+    boldFont(U"ランク:  ", rankText).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 3), Palette::Black);
   }
 }
