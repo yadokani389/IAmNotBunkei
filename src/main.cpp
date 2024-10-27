@@ -26,27 +26,10 @@ std::pair<int, int> Rnd(int level) {
   return std::make_pair(a, b);
 }
 
-void Main() {
-  Scene::SetResizeMode(ResizeMode::Keep);
-  Window::SetStyle(WindowStyle::Sizable);
-  Window::Resize(640, 480);
-  // 背景の色を設定する | Set the background color
-  Scene::SetBackground(Palette::White);
-  // 太文字のフォントを作成する | Create a bold font with MSDF method
-  const Font boldFont{FontMethod::MSDF, 48, Typeface::Bold};
-  const Font regularFont1{FontMethod::MSDF, 48};          // Typeface::Regular
-  const Font regularFont2{48, Typeface::CJK_Regular_JP};  // Typeface::Regular
-  // テキストに含まれる絵文字のためのフォントを作成し、font に追加する | Create a font for emojis in text and add it to font as a fallback
-  const Font emojiFont{48, Typeface::ColorEmoji};
-  boldFont.addFallback(emojiFont);
-
-  int level = 1;  // レベルの変数
-
-  const double SeventInterval = 1.0;
+void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
+  bool start = false;
+  constexpr double SeventInterval = 1.0;
   double SaccumulatedTime = 0.0;
-
-  int start = 0;
-  // スタート画面
   while (System::Update()) {
     if (Key1.down()) {
       level = 1;
@@ -83,8 +66,10 @@ void Main() {
     regularFont2(U"プライバシー・利用規約").draw(17, Vec2{465, 400}, ColorF{0.4});
 
     if (KeyEnter.down()) {
-      start = 1;
+      start = true;
     }
+
+    // スタート後のアニメーション
     if (start) {
       Line{58, 285, 112, 345}.draw(10, Palette::Green);
       Line{210, 241, 112, 345}.draw(10, Palette::Green);
@@ -93,6 +78,26 @@ void Main() {
         break;
     }
   }
+}
+
+void Main() {
+  Scene::SetResizeMode(ResizeMode::Keep);
+  Window::SetStyle(WindowStyle::Sizable);
+  Window::Resize(640, 480);
+  // 背景の色を設定する | Set the background color
+  Scene::SetBackground(Palette::White);
+  // 太文字のフォントを作成する | Create a bold font with MSDF method
+  const Font boldFont{FontMethod::MSDF, 48, Typeface::Bold};
+  const Font regularFont1{FontMethod::MSDF, 48};          // Typeface::Regular
+  const Font regularFont2{48, Typeface::CJK_Regular_JP};  // Typeface::Regular
+  // テキストに含まれる絵文字のためのフォントを作成し、font に追加する | Create a font for emojis in text and add it to font as a fallback
+  const Font emojiFont{48, Typeface::ColorEmoji};
+  boldFont.addFallback(emojiFont);
+
+  int level = 1;  // レベルの変数
+
+  // スタート画面
+  StartMenu(level, boldFont, regularFont2);
 
   Array<Question> elementEasyQuestions = {
       Question{U"希ガス", true, U"He ヘリウム", 120},
