@@ -34,11 +34,25 @@ struct Question {
       m_mainFont(m_string).draw(m_stringSize, Arg::center(400, 390), Palette::Black);
     }
 
-    // チェックマーク
+    // 選択した際の描画処理
     if (m_isSelected) {
-      Circle{240, 230, 40}.draw(ColorF{0, 0.47, 0.78});
-      Line{205, 216, 230, 250}.draw(6, Palette::White);
-      Line{230, 250, 269, 207}.draw(6, Palette::White);
+      // グレーの四角の描画
+      Point rectTopLeft;
+      if (m_string.isEmpty()) {
+        Rect rect{300, 340, 200, 100};
+        rect.setCenter(400, 390).draw(ColorF{0.5, 0.5, 0.5, 0.5});
+        rectTopLeft = rect.tl();
+      } else {
+        const auto textRegion = m_mainFont(m_string).region(m_stringSize);
+        Rect rect{static_cast<int>(textRegion.w) + 20, static_cast<int>(textRegion.h) + 20};
+        rect.setCenter(400, 390).draw(ColorF{0.5, 0.5, 0.5, 0.5});
+        rectTopLeft = rect.tl();
+      }
+      // チェックマークの描画
+      Point checkCenter{rectTopLeft.x, rectTopLeft.y};
+      Circle{checkCenter, 50}.draw(ColorF{0, 0.47, 0.78});
+      Line{checkCenter.movedBy(-35, -24), checkCenter.movedBy(-10, 20)}.draw(7, Palette::White);
+      Line{checkCenter.movedBy(-10, 20), checkCenter.movedBy(29, -43)}.draw(7, Palette::White);
     }
   }
 
