@@ -80,28 +80,20 @@ void Main() {
   int32 gameTime = 60;
 
   size_t index = 0;
-  while (stopwatch1.s() < gameTime) {
-    // 残り時間（秒）
-    int32 leftTime = 10;
-    Stopwatch stopwatch2{StartImmediately::Yes};
-
+  while (stopwatch1.s() < gameTime && index < elementEasyQuestions.size()) {
+    elementEasyQuestions[index].start();
     while (System::Update()) {
       elementEasyQuestions[index].draw();
       elementEasyQuestions[index].update();
 
-      if (leftTime <= stopwatch2.s() || elementEasyQuestions[index].m_timer.reachedZero()) {
+      if (elementEasyQuestions[index].m_timer.reachedZero()) {
         index++;
         break;
-      } else {
-        boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
       }
 
       ClearPrint();
       Print << Cursor::Pos().x << Cursor::Pos().y;
-      Print << stopwatch2.s();
     }
-    if (elementEasyQuestions.size() <= index)
-      break;
 
     Console << U"次の問題へ";
   }
