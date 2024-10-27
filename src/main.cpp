@@ -19,6 +19,21 @@ bool Coprime(int a, int b)  // 互いに素か判定
     return false;
   }
 }
+void Rnd(int a, int b, int level)  // 互いに異なる2つの数字を出す　a,bどちらかは奇数
+{
+  int lim;
+  lim = level * level * 200;
+  a = Random(2, lim);
+  if (IsEven(a)) {
+    while (a == b || IsEven(b)) {
+      b = Random(3, 200);
+    }
+  } else {
+    while (a == b) {
+      b = Random(lim - 180, lim);
+    }
+  }
+}
 
 void Main() {
   Scene::SetResizeMode(ResizeMode::Keep);
@@ -150,6 +165,10 @@ void Main() {
   };
 
   Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
+
+  int a, b;
+  Rnd(a, b, type);
+  Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
 
   Stopwatch stopwatch1{StartImmediately::Yes};
   int32 gameTime = 60;
