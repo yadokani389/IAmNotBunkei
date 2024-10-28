@@ -13,6 +13,7 @@ std::pair<int, int> Rnd(int level) {
   lim = level * level * 200;
   int a = Random(2, lim);
   int b = Random(2, lim);
+  int b = Random(2, lim);
   if (IsEven(a)) {
     while (a == b || IsEven(b)) {
       b = Random(3, 200);
@@ -22,6 +23,8 @@ std::pair<int, int> Rnd(int level) {
       b = Random(lim - 180, lim);
     }
   }
+
+  return std::make_pair(a, b);
 
   return std::make_pair(a, b);
 }
@@ -154,27 +157,56 @@ void Main() {
       Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 120},
       Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
   };
-  Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
+  Array<Question> primeEasyQuestions = {
+    Question{U"素数", true, Texture{U"resources/assets/5.jpg"}};
+  Question{U"素数", true, Texture{U"resources/assets/7.png"}};
+  Question{U"素数", true, Texture{U"resources/assets/17.png"}};
+  Question{U"素数", true, Texture{U"resources/assets/31.png"}};
+  Question{U"素数", true, Texture{U"resources/assets/47.png"}};
+  Question{U"素数", true, Texture{U"resources/assets/107.jpg"}};
+  Question{U"素数", true, Texture{U"resources/assets/109.jpg"}};
 
-  auto [a, b] = Rnd(level);
-  Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
+  Question{U"素数", false, Texture{U"resources/assets/51.jpg"}};
+}
+Array<Question> primeNormalQuestions = {
+  Question{U"素数", true, Texture{U"resources/assets/109.jpg"}};
+Question{U"素数", true, Texture{U"resources/assets/413.png"}};
+Question{U"素数", true, Texture{U"resources/assets/599.png"}};
 
-  Stopwatch stopwatch1{StartImmediately::Yes};
-  int32 gameTime = 60;
+Question{U"素数", false, Texture{U"resources/assets/141.png"}};
+Question{U"素数", false, Texture{U"resources/assets/253.jpg"}};
+Question{U"素数", false, Texture{U"resources/assets/279.jpg"}};
+Question{U"素数", false, Texture{U"resources/assets/513.png"}};
+}
+Array<Question> primeHardQuestions = {
+  Question{U"素数", true, Texture{U"resources/assets/7103.jpg"}};
+Question{U"素数", true, Texture{U"resources/assets/8849.png"}};
+Question{U"素数", true, Texture{U"resources/assets/599.png"}};
 
-  while (0.0 < gameTime - stopwatch1.s()) {
-    // 残り時間（秒）
-    int32 leftTime = 10;
-    Stopwatch stopwatch2{StartImmediately::Yes};
-    while (System::Update()) {
-      elementEasyQuestions[0].draw();
-      elementEasyQuestions[0].update();
+Question{U"素数", false, Texture{U"resources/assets/513.png"}};
+}
 
-      if (0.0 < leftTime - stopwatch2.s()) {
-        boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
-      }
-      ClearPrint();
-      Print << Cursor::Pos().x << Cursor::Pos().y;
+Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
+
+auto [a, b] = Rnd(level);
+Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
+
+Stopwatch stopwatch1{StartImmediately::Yes};
+int32 gameTime = 60;
+
+while (0.0 < gameTime - stopwatch1.s()) {
+  // 残り時間（秒）
+  int32 leftTime = 10;
+  Stopwatch stopwatch2{StartImmediately::Yes};
+  while (System::Update()) {
+    elementEasyQuestions[0].draw();
+    elementEasyQuestions[0].update();
+
+    if (0.0 < leftTime - stopwatch2.s()) {
+      boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
     }
+    ClearPrint();
+    Print << Cursor::Pos().x << Cursor::Pos().y;
   }
+}
 }
