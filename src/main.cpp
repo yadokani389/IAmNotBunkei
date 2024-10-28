@@ -13,7 +13,6 @@ std::pair<int, int> Rnd(int level) {
   lim = level * level * 200;
   int a = Random(2, lim);
   int b = Random(2, lim);
-  int b = Random(2, lim);
   if (IsEven(a)) {
     while (a == b || IsEven(b)) {
       b = Random(3, 200);
@@ -23,9 +22,6 @@ std::pair<int, int> Rnd(int level) {
       b = Random(lim - 180, lim);
     }
   }
-
-  return std::make_pair(a, b);
-
   return std::make_pair(a, b);
 }
 
