@@ -158,33 +158,42 @@ void Main() {
       Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
   };
   Array<Question> primeEasyQuestions = {
-    Question{U"素数", true, Texture{U"resources/assets/5.jpg"}};
-  Question{U"素数", true, Texture{U"resources/assets/7.png"}};
-  Question{U"素数", true, Texture{U"resources/assets/17.png"}};
-  Question{U"素数", true, Texture{U"resources/assets/31.png"}};
-  Question{U"素数", true, Texture{U"resources/assets/47.png"}};
-  Question{U"素数", true, Texture{U"resources/assets/107.jpg"}};
-  Question{U"素数", true, Texture{U"resources/assets/109.jpg"}};
+    Question{U"素数", true, Texture{U"resources/assets/5.jpg"}},
+    Question{U"素数", true, Texture{U"resources/assets/7.png"}},
+    Question{U"素数", true, Texture{U"resources/assets/19.jpg"}},
+    Question{U"素数", true, Texture{U"resources/assets/31.png"}},
+    Question{U"素数", true, Texture{U"resources/assets/47.png"}},
+    Question{U"素数", true, Texture{U"resources/assets/107.jpg"}},
+    Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
 
-  Question{U"素数", false, Texture{U"resources/assets/51.jpg"}};
-}
-Array<Question> primeNormalQuestions = {
-  Question{U"素数", true, Texture{U"resources/assets/109.jpg"}};
-Question{U"素数", true, Texture{U"resources/assets/413.png"}};
-Question{U"素数", true, Texture{U"resources/assets/599.png"}};
+    Question{U"素数", false, Texture{U"resources/assets/51(not).jpg"}},
+    Question{U"素数", false, Texture{U"resources/assets/1(not).jpg"}},
+  };
+  Array<Question> primeNormalQuestions = {
+    Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
+    Question{U"素数", true, Texture{U"resources/assets/413.png"}},
+    Question{U"素数", true, Texture{U"resources/assets/599.png"}},
 
-Question{U"素数", false, Texture{U"resources/assets/141.png"}};
-Question{U"素数", false, Texture{U"resources/assets/253.jpg"}};
-Question{U"素数", false, Texture{U"resources/assets/279.jpg"}};
-Question{U"素数", false, Texture{U"resources/assets/513.png"}};
-}
-Array<Question> primeHardQuestions = {
-  Question{U"素数", true, Texture{U"resources/assets/7103.jpg"}};
-Question{U"素数", true, Texture{U"resources/assets/8849.png"}};
-Question{U"素数", true, Texture{U"resources/assets/599.png"}};
+    Question{U"素数", false, Texture{U"resources/assets/141(not).png"}},
+    Question{U"素数", false, Texture{U"resources/assets/253(not).jpg"}},
+    Question{U"素数", false, Texture{U"resources/assets/279(not).jpg"}},
+    Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
+  };
+  Array<Question> primeHardQuestions = {
+    Question{U"素数", true, Texture{U"resources/assets/599.png"}},
+    Question{U"素数", true, Texture{U"resources/assets/6101.jpg"}},
+    Question{U"素数", true, Texture{U"resources/assets/7103.jpg"}},
+    Question{U"素数", true, Texture{U"resources/assets/8849.png"}},
+    Question{U"素数", false, Texture{U"resources/assets/15739.jpg"}},
 
-Question{U"素数", false, Texture{U"resources/assets/513.png"}};
-}
+    Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
+    Question{U"素数", false, Texture{U"resources/assets/4653(not).jpg"}},
+    Question{U"素数", false, Texture{U"resources/assets/5201(not).jpg"}},
+    Question{U"素数", false, Texture{U"resources/assets/7119(not).jpg"}},
+    Question{U"素数", false, Texture{U"resources/assets/7203(not).jpg"}},
+    Question{U"素数", false, Texture{U"resources/assets/8201(not).jpg"}},
+
+  };
 
 Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
 
@@ -194,7 +203,7 @@ Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b),
 Stopwatch stopwatch1{StartImmediately::Yes};
 int32 gameTime = 60;
 
-while (0.0 < gameTime - stopwatch1.s()) {
+while(0.0 < gameTime - stopwatch1.s()) {
   // 残り時間（秒）
   int32 leftTime = 10;
   Stopwatch stopwatch2{StartImmediately::Yes};
