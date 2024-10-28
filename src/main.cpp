@@ -169,7 +169,11 @@ void Main() {
       Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 120},
       Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
   };
-  Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
+
+  Array<Question> ProgrammingLaungageEasyQestions = {
+    Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}},
+    //ここに追加
+  };
 
   auto [a, b] = Rnd(level);
   Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
