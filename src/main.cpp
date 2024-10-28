@@ -109,7 +109,7 @@ void Main() {
   // const Audio CorrectSound = Audio(U"engine/resources/sounds/Quiz-Correct_Answer01-1.mp3");
   // const Audio WrongSound = Audio(U"engine/resources/sounds/Quiz-Wrong_Buzzer02-2.mp3");
 
-  Array<Question> elementEasyQuestions = {
+  Array<Question> tmp = {
       Question{U"希ガス", true, U"He ヘリウム", 120},
       Question{U"希ガス", true, U"Ne ネオン", 120},
       Question{U"希ガス", true, U"Kr クリプトン", 120},
@@ -170,9 +170,23 @@ void Main() {
       Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
   };
 
-  Array<Question> ProgrammingLaungageEasyQestions = {
+  Array<Question> elementEasyQuestions = {
     Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}},
-    //ここに追加
+    Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/python-logo.png"}},
+    Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/ruby-logo.png"}},
+    Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/Julia-logo.png"}},
+    Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/java-logo.png"}},
+    Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/bash-logo.png"}},
+    Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/c-logo.png"}},
+
+    Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/firebasenot.png"}},
+    Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/ScratchNot.png"}},
+    Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/ubuntunot.png"}},
+    Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/v.png"}},
+    Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/vscnot.png"}},
+    Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/Roblox_Logo.png"}},
+    Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/Overwatch_logo.png"}},
+
   };
 
   auto [a, b] = Rnd(level);
