@@ -126,6 +126,11 @@ void Main() {
       Question{U"アルカリ金属(１族)", false, U"Po ポロニウム", 120},
       Question{U"アルカリ金属(１族)", false, U"Nh ニホニウム", 120},
       Question{U"アルカリ金属(１族)", false, U"Sb アンチモン", 120},
+      Question{U"アルカリ金属(１族)", false, U"Kr クリプトン", 120},
+      Question{U"アルカリ金属(１族)", false, U"Fe 鉄", 120},
+      Question{U"アルカリ金属(１族)", false, U"Ti チタン", 120},
+      Question{U"アルカリ金属(１族)", false, U"Os オスミウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"W タングステン", 120},
   };
   Array<Question> elementHardQuestions = {
       Question{U"ランタノイド元素", true, U"Ce セリウム", 120},
@@ -149,69 +154,69 @@ void Main() {
       Question{U"ランタノイド元素", false, U"Fm フェルミウム", 120},
       Question{U"ランタノイド元素", false, U"Lr ローレンシウム", 120},
       Question{U"ランタノイド元素", false, U"Md メンデレビウム", 120},
-      Question{U"ランタノイド元素", false, U"Lv リバボリウム", 120},
+      Question{U"ランタノイド元素", false, U"Lv リバモリウム", 120},
       Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 120},
       Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
   };
   Array<Question> primeEasyQuestions = {
-    Question{U"素数", true, Texture{U"resources/assets/5.jpg"}},
-    Question{U"素数", true, Texture{U"resources/assets/7.png"}},
-    Question{U"素数", true, Texture{U"resources/assets/19.jpg"}},
-    Question{U"素数", true, Texture{U"resources/assets/31.png"}},
-    Question{U"素数", true, Texture{U"resources/assets/47.png"}},
-    Question{U"素数", true, Texture{U"resources/assets/107.jpg"}},
-    Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/5.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/7.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/19.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/31.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/47.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/107.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
 
-    Question{U"素数", false, Texture{U"resources/assets/51(not).jpg"}},
-    Question{U"素数", false, Texture{U"resources/assets/1(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/51(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/1(not).jpg"}},
   };
   Array<Question> primeNormalQuestions = {
-    Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
-    Question{U"素数", true, Texture{U"resources/assets/413.png"}},
-    Question{U"素数", true, Texture{U"resources/assets/599.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/413.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/599.png"}},
 
-    Question{U"素数", false, Texture{U"resources/assets/141(not).png"}},
-    Question{U"素数", false, Texture{U"resources/assets/253(not).jpg"}},
-    Question{U"素数", false, Texture{U"resources/assets/279(not).jpg"}},
-    Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
+      Question{U"素数", false, Texture{U"resources/assets/141(not).png"}},
+      Question{U"素数", false, Texture{U"resources/assets/253(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/279(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
   };
   Array<Question> primeHardQuestions = {
-    Question{U"素数", true, Texture{U"resources/assets/599.png"}},
-    Question{U"素数", true, Texture{U"resources/assets/6101.jpg"}},
-    Question{U"素数", true, Texture{U"resources/assets/7103.jpg"}},
-    Question{U"素数", true, Texture{U"resources/assets/8849.png"}},
-    Question{U"素数", false, Texture{U"resources/assets/15739.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/599.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/6101.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/7103.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/8849.png"}},
+      Question{U"素数", false, Texture{U"resources/assets/15739.jpg"}},
 
-    Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
-    Question{U"素数", false, Texture{U"resources/assets/4653(not).jpg"}},
-    Question{U"素数", false, Texture{U"resources/assets/5201(not).jpg"}},
-    Question{U"素数", false, Texture{U"resources/assets/7119(not).jpg"}},
-    Question{U"素数", false, Texture{U"resources/assets/7203(not).jpg"}},
-    Question{U"素数", false, Texture{U"resources/assets/8201(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
+      Question{U"素数", false, Texture{U"resources/assets/4653(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/5201(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/7119(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/7203(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/8201(not).jpg"}},
 
   };
 
-Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
+  Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
 
-auto [a, b] = Rnd(level);
-Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
+  auto [a, b] = Rnd(level);
+  Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
 
-Stopwatch stopwatch1{StartImmediately::Yes};
-int32 gameTime = 60;
+  Stopwatch stopwatch1{StartImmediately::Yes};
+  int32 gameTime = 60;
 
-while(0.0 < gameTime - stopwatch1.s()) {
-  // 残り時間（秒）
-  int32 leftTime = 10;
-  Stopwatch stopwatch2{StartImmediately::Yes};
-  while (System::Update()) {
-    elementEasyQuestions[0].draw();
-    elementEasyQuestions[0].update();
+  while (0.0 < gameTime - stopwatch1.s()) {
+    // 残り時間（秒）
+    int32 leftTime = 10;
+    Stopwatch stopwatch2{StartImmediately::Yes};
+    while (System::Update()) {
+      elementEasyQuestions[0].draw();
+      elementEasyQuestions[0].update();
 
-    if (0.0 < leftTime - stopwatch2.s()) {
-      boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
+      if (0.0 < leftTime - stopwatch2.s()) {
+        boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
+      }
+      ClearPrint();
+      Print << Cursor::Pos().x << Cursor::Pos().y;
     }
-    ClearPrint();
-    Print << Cursor::Pos().x << Cursor::Pos().y;
   }
-}
 }
