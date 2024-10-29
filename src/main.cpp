@@ -25,27 +25,20 @@ std::pair<int, int> Rnd(int level) {
   return std::make_pair(a, b);
 }
 
-void Main() {
-  Scene::SetResizeMode(ResizeMode::Keep);
-  Window::SetStyle(WindowStyle::Sizable);
-  Window::Resize(640, 480);
-  // 背景の色を設定する | Set the background color
-  Scene::SetBackground(Palette::White);
-  // 太文字のフォントを作成する | Create a bold font with MSDF method
-  const Font boldFont{FontMethod::MSDF, 48, Typeface::Bold};
-  const Font regularFont1{FontMethod::MSDF, 48};          // Typeface::Regular
-  const Font regularFont2{48, Typeface::CJK_Regular_JP};  // Typeface::Regular
-  // テキストに含まれる絵文字のためのフォントを作成し、font に追加する | Create a font for emojis in text and add it to font as a fallback
-  const Font emojiFont{48, Typeface::ColorEmoji};
-  boldFont.addFallback(emojiFont);
+std::pair<String, Color> GetLevelInfo(int level) {
+  if (level == 1)
+    return std::make_pair(U"EASY", ColorF{0.85, 0.6, 0.73});
+  else if (level == 2)
+    return std::make_pair(U"NORMAL", ColorF{0.3, 0.56, 0.23});
+  else if (level == 3)
+    return std::make_pair(U"HARD", ColorF{0.68, 0.26, 0.15});
+  else
+    return std::make_pair(U"INSANE", ColorF{0.36, 0.06, 0.45});
+}
 
-  int level = 1;  // レベルの変数
-
-  const double SeventInterval = 1.0;
-  double SaccumulatedTime = 0.0;
-
-  int start = 0;
-  // スタート画面
+void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
+  bool start = false;
+  Timer timer{Seconds{1}};
   while (System::Update()) {
     if (Key1.down()) {
       level = 1;
@@ -57,14 +50,7 @@ void Main() {
       level = 4;
     }
 
-    if (level == 1)
-      boldFont(U"EASY").draw(100, Vec2{50, 60}, ColorF{0.85, 0.6, 0.73});
-    else if (level == 2)
-      boldFont(U"NORMAL").draw(100, Vec2{50, 60}, ColorF{0.3, 0.56, 0.23});
-    else if (level == 3)
-      boldFont(U"HARD").draw(100, Vec2{50, 60}, ColorF{0.68, 0.26, 0.15});
-    else if (level == 4)
-      boldFont(U"INSANE").draw(100, Vec2{50, 60}, ColorF{0.36, 0.06, 0.45});
+    boldFont(GetLevelInfo(level).first).draw(100, Vec2{50, 60}, GetLevelInfo(level).second);
 
     // スタート用
     RoundRect{40, 240, 650, 200, 10}.draw(ColorF{0.97, 0.97, 0.97});
@@ -82,16 +68,45 @@ void Main() {
     regularFont2(U"プライバシー・利用規約").draw(17, Vec2{465, 400}, ColorF{0.4});
 
     if (KeyEnter.down()) {
-      start = 1;
+      start = true;
+      timer.start();
     }
+
+    // スタート後のアニメーション
     if (start) {
       Line{58, 285, 112, 345}.draw(10, Palette::Green);
       Line{210, 241, 112, 345}.draw(10, Palette::Green);
-      SaccumulatedTime += Scene::DeltaTime();
-      if (SeventInterval <= SaccumulatedTime)
+      if (timer.reachedZero())
         break;
     }
   }
+}
+
+void Main() {
+  Scene::SetResizeMode(ResizeMode::Keep);
+  Window::SetStyle(WindowStyle::Sizable);
+  Window::Resize(640, 480);
+  // 背景の色を設定する | Set the background color
+  Scene::SetBackground(Palette::White);
+  // 太文字のフォントを作成する | Create a bold font with MSDF method
+  const Font boldFont{FontMethod::MSDF, 48, Typeface::Bold};
+  const Font regularFont1{FontMethod::MSDF, 48};          // Typeface::Regular
+  const Font regularFont2{48, Typeface::CJK_Regular_JP};  // Typeface::Regular
+  // テキストに含まれる絵文字のためのフォントを作成し、font に追加する | Create a font for emojis in text and add it to font as a fallback
+  const Font emojiFont{48, Typeface::ColorEmoji};
+  boldFont.addFallback(emojiFont);
+
+  int level = 1;  // レベルの変数
+
+  // スタート画面
+  StartMenu(level, boldFont, regularFont2);
+
+  // Audio関係
+  const Audio CorrectSound = Audio(U"resources/sounds/Quiz-Correct_Answer01-1.mp3");
+  const Audio WrongSound = Audio(U"resources/sounds/Quiz-Wrong_Buzzer02-2.mp3");
+  // for mac
+  // const Audio CorrectSound = Audio(U"engine/resources/sounds/Quiz-Correct_Answer01-1.mp3");
+  // const Audio WrongSound = Audio(U"engine/resources/sounds/Quiz-Wrong_Buzzer02-2.mp3");
 
   Array<Question> elementEasyQuestions = {
       Question{U"希ガス", true, U"He ヘリウム", 120},
@@ -201,22 +216,54 @@ void Main() {
   auto [a, b] = Rnd(level);
   Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
 
-  Stopwatch stopwatch1{StartImmediately::Yes};
-  int32 gameTime = 60;
+  Timer gameTimer{Seconds{60}, StartImmediately::Yes};
 
-  while (0.0 < gameTime - stopwatch1.s()) {
-    // 残り時間（秒）
-    int32 leftTime = 10;
-    Stopwatch stopwatch2{StartImmediately::Yes};
+  // ゲーム画面
+  size_t index = 0;
+  size_t point = 0;
+  while (!gameTimer.reachedZero() && index < elementEasyQuestions.size()) {
+    elementEasyQuestions[index].start();
     while (System::Update()) {
-      elementEasyQuestions[0].draw();
-      elementEasyQuestions[0].update();
+      elementEasyQuestions[index].draw();
+      elementEasyQuestions[index].update();
 
-      if (0.0 < leftTime - stopwatch2.s()) {
-        boldFont(leftTime - stopwatch2.s()).draw(60, 670, 50, Palette::White);
-      }
-      ClearPrint();
-      Print << Cursor::Pos().x << Cursor::Pos().y;
+      if (elementEasyQuestions[index].m_timer.reachedZero())
+        break;
     }
+
+    if (elementEasyQuestions[index].isCorrect()) {
+      point++;
+      CorrectSound.playOneShot();
+    } else {
+      WrongSound.playOneShot();
+    }
+
+    index++;
+    Console << U"次の問題へ";
+  }
+
+  Console << U"リザルト画面";
+  // リザルト画面
+  while (System::Update()) {
+    String rankText = U"";
+
+    if (point < 5)
+      rankText = U"文系？";
+    else if (point < 10)
+      rankText = U"ちょっと理系";
+    else if (point < 15)
+      rankText = U"まぁまぁ理系";
+    else if (point < 20)
+      rankText = U"理系";
+    else if (point < 25)
+      rankText = U"伝説の理系";
+    else
+      rankText = U"TOP OF 理系";
+
+    auto xAdvance = static_cast<int>(boldFont(U"難易度:  ").getXAdvances(50).sum());
+    boldFont(U"難易度:  ").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4), Palette::Black);
+    boldFont(GetLevelInfo(level).first).draw(50, Arg::leftCenter(Scene::Height() / 4 + xAdvance, Scene::Height() / 4), GetLevelInfo(level).second);
+    boldFont(U"スコア:  ", point).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+    boldFont(U"ランク:  ", rankText).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 3), Palette::Black);
   }
 }
