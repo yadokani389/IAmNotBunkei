@@ -4,15 +4,24 @@
 
 struct Question {
   Question(const String& _question, bool _answer, const String& _string, double _stringSize)
-      : question(_question), answer(_answer), string(_string), stringSize(_stringSize), mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}), subFont(Font{FontMethod::MSDF, 48}) {}
+      : question(_question),
+        answer(_answer),
+        string(_string),
+        stringSize(_stringSize),
+        mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
+        subFont(Font{FontMethod::MSDF, 48}) {}
   Question(const String& _question, bool _answer, const Texture& _texture)
-      : question(_question), answer(_answer), texture(_texture), mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}), subFont(Font{FontMethod::MSDF, 48}) {}
+      : question(_question),
+        answer(_answer),
+        texture(_texture.resized(400)),
+        mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
+        subFont(Font{FontMethod::MSDF, 48}) {}
 
   const String question;
   const bool answer;
   const String string;
   const double stringSize = 0;
-  const Texture texture;
+  const TextureRegion texture;
   const Font mainFont;
   const Font subFont;
   bool isSelected = false;
@@ -39,8 +48,7 @@ struct Question {
       // グレーの四角の描画
       Point rectTopLeft;
       if (string.isEmpty()) {
-        const Size textureSize = texture.size();
-        Rect rect{textureSize};
+        Rect rect{texture.size.asPoint()};
         rect.setCenter(400, 390).draw(ColorF{0.5, 0.5, 0.5, 0.5});
         rectTopLeft = rect.tl();
       } else {
@@ -60,6 +68,7 @@ struct Question {
   inline void start() {
     timer.setRemaining(SecondsF{10});
     timer.start();
+    isSelected = false;
   }
 
   inline void update() {
