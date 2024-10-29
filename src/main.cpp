@@ -1,7 +1,7 @@
-#include <Siv3D.hpp>
+# include <Siv3D.hpp>
 
-#include "Connection.hpp"
-#include "Question.hpp"
+# include "Connection.hpp"
+# include "Question.hpp"
 
 // 互いに素か判定
 bool Coprime(int a, int b) {
@@ -38,8 +38,8 @@ std::pair<String, Color> GetLevelInfo(int level) {
     return std::make_pair(U"INSANE", ColorF{0.36, 0.06, 0.45});
 }
 
-// button
-bool button(double x, double y, double width, double height, const Font& font, const String& txt) {
+// Button
+bool Button(double x, double y, double width, double height, const Font& font, const String& txt) {
   RectF rect{Arg::center(x, y), width, height};
   rect.rounded(15).draw(ColorF{0.25, 0.5, 0.8, 0.8});
   rect.rounded(15).drawFrame(2, 0, Palette::White);
@@ -57,7 +57,7 @@ void StartMenu(int& level, const Font& boldFont, const Font& regularFont2, Serve
   bool start = false;
   Timer timer{Seconds{1}};
   while (System::Update()) {
-    server.Update();
+    server.update();
     if (Key1.down()) {
       level = 1;
     } else if (Key2.down()) {
@@ -120,21 +120,21 @@ void Main() {
   Server server;
 
   // ここにIPアドレスとポート番号を入力
-  const IPv4Address serverAddress{U""};
+  const IPv4Address serverAddress{U"192.168.10.50"};
   constexpr uint16 port = 80;
 
   while (System::Update()) {
     // hostとしてスタート
     const Vec2 center = Scene::Center(); 
-    if (button(center.x, center.y - 50, 200, 75, regularFont1, U"Be Host")) {
-      server.StartServer(port);
+    if (Button(center.x, center.y - 50, 200, 75, regularFont1, U"Be Host")) {
+      server.startServer(port);
       break;
     }
 
     // clientとしてスタート
-    if (button(center.x, center.y + 50, 200, 75, regularFont1, U"Be Client")) {
+    if (Button(center.x, center.y + 50, 200, 75, regularFont1, U"Be Client")) {
       while (System::Update()) {
-        if (server.ConnectToServer(serverAddress, port)) break;
+        if (server.connectToServer(serverAddress, port)) break;
         boldFont(U"Connecting...").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
         System::Sleep(10);
       }
@@ -149,17 +149,17 @@ void Main() {
   }
 
   if (server.isHost) {
-    server.SendStart(level);
+    server.sendStart(level);
   } else {
     while (System::Update()) {
       boldFont(U"Waiting for game start...").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
 
-      if (server.ReceiveStart(level)) {
+      if (server.receiveStart(level)) {
         Console << U"Game start received!";
         break;
       }
 
-      server.Update();
+      server.update();
       System::Sleep(10);
     }
   }
@@ -242,7 +242,7 @@ void Main() {
   size_t index = 0;
   size_t point = 0;
   while (!gameTimer.reachedZero() && index < elementEasyQuestions.size()) {
-    server.Update();
+    server.update();
     elementEasyQuestions[index].start();
     while (System::Update()) {
       elementEasyQuestions[index].draw();
@@ -265,14 +265,14 @@ void Main() {
 
   if (server.isHost) {
     size_t receivedAmount = 0;
-    while (receivedAmount < server.m_SessionIDs.size()) {
-      server.Update();
+    while (receivedAmount < server.sessionIds.size()) {
+      server.update();
       System::Sleep(10);
-      server.ReceiveScore(point, receivedAmount);
+      server.receiveScore(point, receivedAmount);
     }
   } else {
-    server.Update();
-    server.SendScore(point);
+    server.update();
+    server.sendScore(point);
   }
 
   Console << U"リザルト画面";
@@ -280,7 +280,7 @@ void Main() {
 
   while (System::Update()) {
     if (server.isHost) {
-      server.Update();
+      server.update();
       String rankText = U"";
 
       if (point < 5)

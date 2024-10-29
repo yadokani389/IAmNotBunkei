@@ -1,30 +1,25 @@
-#pragma once
+# pragma once
 
-#include <Siv3D.hpp>
+# include <Siv3D.hpp>
 
-struct StartMessage {
-  int ID = 1;
-  int level;
-};
-
-struct ScoreMessage {
-  int ID = 2;
-  size_t score;
+struct Message {
+  size_t id;
+  size_t element;
 };
 
 struct Server {
   bool isHost = false;
 
   // for server
-  TCPServer m_Server;
-  Array<TCPSessionID> m_SessionIDs;
+  TCPServer server;
+  Array<TCPSessionID> sessionIds;
 
   // for client
-  TCPClient m_Client;
+  TCPClient client;
 
-  void StartServer(uint16 port) {
+  void startServer(uint16 port) {
     isHost = true;
-    m_Server.startAcceptMulti(port);
+    server.startAcceptMulti(port);
     Console << U"Server Established!";
 
     // 自分の IP アドレス一覧を取得
@@ -36,10 +31,10 @@ struct Server {
     }
   }
 
-  bool ConnectToServer(const IPv4Address& serverAddress, uint16 port) {
+  bool connectToServer(const IPv4Address& serverAddress, uint16 port) {
     isHost = false;
 
-    if (m_Client.connect(serverAddress, port)) {
+    if (client.connect(serverAddress, port)) {
       Console << U"Connected to Server!";
       return true;
     } else {
@@ -48,24 +43,25 @@ struct Server {
     }
   }
 
-  void SendStart(const int& level) {
-    StartMessage message;
-    message.level = level;
+  void sendStart(const int& level) {
+    Message message;
+    message.id = 1;
+    message.element = level;
 
-    for (const auto& sessionID : m_SessionIDs) {
-      if (m_Server.hasSession(sessionID)) {
-        m_Server.send(message, sessionID);
+    for (const auto& sessionID : sessionIds) {
+      if (server.hasSession(sessionID)) {
+        server.send(message, sessionID);
         Console << U"Notified to ID: " << sessionID << U"Start level at: " << level;
       }
     }
   }
 
-  bool ReceiveStart(int& level) {
-    StartMessage message;
-    if (m_Client.available() >= sizeof(StartMessage)) {
-      if (m_Client.read(message)) {
-        if (message.ID == 1) {
-          level = message.level;
+  bool receiveStart(int& level) {
+    Message message;
+    if (client.available() >= sizeof(Message)) {
+      if (client.read(message)) {
+        if (message.id == 1) {
+          level = message.element;
           Console << U"Start Received! Level at: " << level;
           return true;
         }
@@ -74,53 +70,54 @@ struct Server {
     return false;
   }
 
-  void SendScore(size_t& score) {
-    ScoreMessage message;
-    message.score = score;
-
-    if (m_Client.isConnected()) {
-      m_Client.send(message);
-      Console << U"Send score to Sever! Score: " << score;
-    } else {
-      Console << U"No connections!";
-    }
-  }
-
-  void ReceiveScore(size_t& score, size_t& receivedAmount) {
-    for (const auto& sessionID : m_SessionIDs) {
-      while (m_Server.available(sessionID) >= sizeof(ScoreMessage)) {
-        ScoreMessage message;
-        if (m_Server.read(message, sessionID) && message.ID == 2) {
-          Console << U"Client: " << sessionID << U" score: " << message.score;
-          score += message.score;
+  void receiveScore(size_t& score, size_t& receivedAmount) {
+    for (const auto& sessionID : sessionIds) {
+      while (server.available(sessionID) >= sizeof(Message)) {
+        Message message;
+        if (server.read(message, sessionID) && message.id == 2) {
+          Console << U"Client: " << sessionID << U" score: " << message.element;
+          score += message.element;
           receivedAmount++;
         }
       }
     }
   }
 
-  void UpdateServer() {
-    if (m_Server.hasSession()) {
-      auto sessionIDs = m_Server.getSessionIDs();
+  void sendScore(size_t& score) {
+    Message message;
+    message.id = 2;
+    message.element = score;
+
+    if (client.isConnected()) {
+      client.send(message);
+      Console << U"Send score to Sever! Score: " << score;
+    } else {
+      Console << U"No connections!";
+    }
+  }
+
+  void updateServer() {
+    if (server.hasSession()) {
+      auto sessionIDs = server.getSessionIDs();
       for (const auto& sessionID : sessionIDs) {
-        if (!m_SessionIDs.includes(sessionID)) {
-          m_SessionIDs << sessionID;
+        if (!sessionIds.includes(sessionID)) {
+          sessionIds << sessionID;
           Console << U"New client! ID: " << sessionID;
         }
       }
     }
   }
 
-  void UpdateClient() {
-    if (!m_Client.isConnected() && !m_Client.hasError()) {
+  void updateClient() {
+    if (!client.isConnected() && !client.hasError()) {
       Console << U"Disconnected!";
     }
   }
 
-  void Update() {
+  void update() {
     if (isHost)
-      UpdateServer();
+      updateServer();
     else
-      UpdateClient();
+      updateClient();
   }
 };
