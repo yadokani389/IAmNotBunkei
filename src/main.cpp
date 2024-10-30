@@ -116,7 +116,7 @@ void LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
     smallFont(Format(U"IP: "), myIp.str()).drawAt(Vec2(Scene::Center().x, Scene::Center().y + 100), Palette::Darkgray);
     smallFont(U"Press Space To Start").drawAt(Vec2(Scene::Center().x, Scene::Center().y + 200), Palette::Darkgray);
 
-    if(KeySpace.pressed()) break;
+    if (KeySpace.pressed()) break;
   }
 }
 
@@ -156,25 +156,32 @@ void Main() {
     if (Button(center.x, center.y + 50, 200, 75, regularFont1, U"Be Client")) {
       TextEditState input;
 
-      while(System::Update()){
+      while (System::Update()) {
         SimpleGUI::TextBox(input, Vec2(Scene::Center().x - 150, Scene::Center().y - 23.5), 300);
-        if(Button(Scene::Center().x, Scene::Center().y + 100, 200, 75, smallBoldFont, U"接続")) {
+        if (Button(Scene::Center().x, Scene::Center().y + 100, 200, 75, smallBoldFont, U"接続")) {
           serverAddress = IPv4Address(input.text);
           break;
         }
       }
-      
+
+      bool done = false;
       while (System::Update()) {
-        if (server.connectToServer(serverAddress, port)) break;
+        if (server.connectToServer(serverAddress, port)) {
+          done = true;
+          break;
+        }
+        if (Button(Scene::Center().x, Scene::Center().y + 100, 200, 75, smallBoldFont, U"キャンセル")) {
+          done = false;
+          break;
+        }
         boldFont(U"Connecting...").drawAt(Scene::Center(), Palette::Darkgray);
         System::Sleep(10);
       }
-      break;
+      if (done) break;
     }
   }
 
   // スタート画面
-
 
   if (server.isHost) {
     LoadingMenu(server, boldFont, smallBoldFont);
@@ -264,7 +271,6 @@ void Main() {
       Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
   };
   Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
-
   auto [a, b] = Rnd(level);
   Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
 
