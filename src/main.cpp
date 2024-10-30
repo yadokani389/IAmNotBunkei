@@ -258,6 +258,33 @@ void Main() {
       Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/roblox-logo.png"}},
       Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/overwatch-logo.png"}},
   };
+  Array<Question> calculationEasyQuestions = {
+      Question{U"1以上", true, Texture{U"resources/assets/E2.png"}},
+      Question{U"1以上", true, Texture{U"resources/assets/E5.png"}},
+      Question{U"1以上", true, Texture{U"resources/assets/E6.png"}},
+      Question{U"1以上", true, Texture{U"resources/assets/E7.png"}},
+      Question{U"1以上", true, Texture{U"resources/assets/E9.png"}},
+      Question{U"1以上", true, Texture{U"resources/assets/E11.png"}},
+
+      Question{U"1以上", false, Texture{U"resources/assets/E1(not).png"}},
+      Question{U"1以上", false, Texture{U"resources/assets/E3(not).png"}},
+      Question{U"1以上", false, Texture{U"resources/assets/E4(not).png"}},
+      Question{U"1以上", false, Texture{U"resources/assets/E8(not).png"}},
+      Question{U"1以上", false, Texture{U"resources/assets/E10(not).png"}},
+  };
+  Array<Question> calculationNormalQuestions = {
+      Question{U"1以上", true, Texture{U"resources/assets/N1.png"}},
+      Question{U"1以上", true, Texture{U"resources/assets/N3.png"}},
+      Question{U"1以上", true, Texture{U"resources/assets/N4.png"}},
+      Question{U"1以上", true, Texture{U"resources/assets/N5.png"}},
+      Question{U"1以上", true, Texture{U"resources/assets/N9.png"}},
+      Question{U"1以上", true, Texture{U"resources/assets/N10.png"}},
+
+      Question{U"1以上", false, Texture{U"resources/assets/N2(not).png"}},
+      Question{U"1以上", false, Texture{U"resources/assets/N6(not).png"}},
+      Question{U"1以上", false, Texture{U"resources/assets/N7(not).png"}},
+      Question{U"1以上", false, Texture{U"resources/assets/N8(not).png"}},
+  };
 
   auto [a, b] = Rnd(level);
   Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
@@ -267,25 +294,25 @@ void Main() {
   // ゲーム画面
   size_t index = 0;
   int32 point = 0;
-  while (!gameTimer.reachedZero() && index < elementInsaneQuestions.size()) {
-    elementInsaneQuestions[index].start();
+  while (!gameTimer.reachedZero() && index < calculationEasyQuestions.size()) {
+    calculationEasyQuestions[index].start();
     while (System::Update()) {
-      elementInsaneQuestions[index].draw();
-      elementInsaneQuestions[index].update();
-    
-      if (elementInsaneQuestions[index].timer.reachedZero())
+      calculationEasyQuestions[index].draw();
+      calculationEasyQuestions[index].update();
+
+      if (calculationEasyQuestions[index].timer.reachedZero())
         break;
     }
-   if (elementInsaneQuestions[index].isCorrect()) {
+    if (calculationEasyQuestions[index].isCorrect()) {
       CorrectSound.playOneShot();
-      if (elementInsaneQuestions[index].isSelected) {
+      if (calculationNormalQuestions[index].isSelected) {
         point += 10;
       } else {
         point += 15;
       }
     } else {
       WrongSound.playOneShot();
-      if (elementInsaneQuestions[index].isSelected) {
+      if (calculationEasyQuestions[index].isSelected) {
         point -= 7;
       } else {
         point -= 12;
