@@ -33,8 +33,8 @@ struct Server {
 
   bool connectToServer(const IPv4Address& serverAddress, uint16 port) {
     isHost = false;
-
-    if (client.connect(serverAddress, port)) {
+    client.connect(serverAddress, port);
+    if (client.isConnected()) {
       Console << U"Connected to Server!";
       return true;
     } else {

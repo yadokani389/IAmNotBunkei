@@ -1,7 +1,7 @@
-# include <Siv3D.hpp>
+#include <Siv3D.hpp>
 
-# include "Connection.hpp"
-# include "Question.hpp"
+#include "Connection.hpp"
+#include "Question.hpp"
 
 // 互いに素か判定
 bool Coprime(int a, int b) {
@@ -100,6 +100,26 @@ void StartMenu(int& level, const Font& boldFont, const Font& regularFont2, Serve
   }
 }
 
+void LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
+  const auto ipAddresses = Network::EnumerateIPv4Addresses();
+  IPv4Address myIp;
+
+  for (const auto& ip : ipAddresses) {
+    if (ip != IPv4Address::Localhost()) {
+      myIp = ip;
+    }
+  }
+  while (System::Update()) {
+    server.update();
+
+    largeFont(Format(U"参加台数: ", server.sessionIds.size())).drawAt(Scene::Center(), Palette::Darkgray);
+    smallFont(Format(U"IP: "), myIp.str()).drawAt(Vec2(Scene::Center().x, Scene::Center().y + 100), Palette::Darkgray);
+    smallFont(U"Press Space To Start").drawAt(Vec2(Scene::Center().x, Scene::Center().y + 200), Palette::Darkgray);
+
+    if(KeySpace.pressed()) break;
+  }
+}
+
 void Main() {
   Scene::SetResizeMode(ResizeMode::Keep);
   Window::SetStyle(WindowStyle::Sizable);
@@ -108,6 +128,7 @@ void Main() {
   Scene::SetBackground(Palette::White);
   // 太文字のフォントを作成する | Create a bold font with MSDF method
   const Font boldFont{FontMethod::MSDF, 48, Typeface::Bold};
+  const Font smallBoldFont{FontMethod::MSDF, 24, Typeface::Bold};
   const Font regularFont1{FontMethod::MSDF, 48};          // Typeface::Regular
   const Font regularFont2{48, Typeface::CJK_Regular_JP};  // Typeface::Regular
   // テキストに含まれる絵文字のためのフォントを作成し、font に追加する | Create a font for emojis in text and add it to font as a fallback
@@ -120,12 +141,12 @@ void Main() {
   Server server;
 
   // ここにIPアドレスとポート番号を入力
-  const IPv4Address serverAddress{U"192.168.10.50"};
+  IPv4Address serverAddress;
   constexpr uint16 port = 80;
 
   while (System::Update()) {
     // hostとしてスタート
-    const Vec2 center = Scene::Center(); 
+    const Vec2 center = Scene::Center();
     if (Button(center.x, center.y - 50, 200, 75, regularFont1, U"Be Host")) {
       server.startServer(port);
       break;
@@ -133,9 +154,19 @@ void Main() {
 
     // clientとしてスタート
     if (Button(center.x, center.y + 50, 200, 75, regularFont1, U"Be Client")) {
+      TextEditState input;
+
+      while(System::Update()){
+        SimpleGUI::TextBox(input, Vec2(Scene::Center().x - 150, Scene::Center().y - 23.5), 300);
+        if(Button(Scene::Center().x, Scene::Center().y + 100, 200, 75, smallBoldFont, U"接続")) {
+          serverAddress = IPv4Address(input.text);
+          break;
+        }
+      }
+      
       while (System::Update()) {
         if (server.connectToServer(serverAddress, port)) break;
-        boldFont(U"Connecting...").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+        boldFont(U"Connecting...").drawAt(Scene::Center(), Palette::Darkgray);
         System::Sleep(10);
       }
       break;
@@ -144,7 +175,9 @@ void Main() {
 
   // スタート画面
 
+
   if (server.isHost) {
+    LoadingMenu(server, boldFont, smallBoldFont);
     StartMenu(level, boldFont, regularFont2, server);
   }
 
@@ -152,8 +185,7 @@ void Main() {
     server.sendStart(level);
   } else {
     while (System::Update()) {
-      boldFont(U"Waiting for game start...").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
-
+      boldFont(U"Waiting for game start...").drawAt(Scene::Center(), Palette::Darkgray);
       if (server.receiveStart(level)) {
         Console << U"Game start received!";
         break;
