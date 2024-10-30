@@ -176,13 +176,13 @@ void Main() {
       Question{U"ランタノイド元素", true, U"Dy ジスプロニウム", 85},
       Question{U"ランタノイド元素", true, U"Ho ホルミウム", 110},
       Question{U"ランタノイド元素", true, U"Er エルビウム", 110},
-      Question{U"ランタノイド元素", true, U"Er ツリウム", 120},
+      Question{U"ランタノイド元素", true, U"Tm ツリウム", 120},
       Question{U"ランタノイド元素", true, U"Yb イッテルビウム", 85},
-      Question{U"ランタノイド元素", true, U"Er ルテチウム", 110},
+      Question{U"ランタノイド元素", true, U"Lu ルテチウム", 110},
 
       Question{U"ランタノイド元素", false, U"Np ネプツニウム", 100},
       Question{U"ランタノイド元素", false, U"Am アメリシウム", 100},
-      Question{U"ランタノイド元素", true, U"Cf カリホルニウム", 85},
+      Question{U"ランタノイド元素", false, U"Cf カリホルニウム", 85},
       Question{U"ランタノイド元素", false, U"Fm フェルミウム", 100},
       Question{U"ランタノイド元素", false, U"Lr ローレンシウム", 75},
       Question{U"ランタノイド元素", false, U"Md メンデレビウム", 85},
@@ -267,25 +267,25 @@ void Main() {
   // ゲーム画面
   size_t index = 0;
   int32 point = 0;
-  while (!gameTimer.reachedZero() && index < programmingLanguageEasyQuestions.size()) {
-    programmingLanguageEasyQuestions[index].start();
+  while (!gameTimer.reachedZero() && index < elementInsaneQuestions.size()) {
+    elementInsaneQuestions[index].start();
     while (System::Update()) {
-      programmingLanguageEasyQuestions[index].draw();
-      programmingLanguageEasyQuestions[index].update();
+      elementInsaneQuestions[index].draw();
+      elementInsaneQuestions[index].update();
     
-      if (programmingLanguageEasyQuestions[index].timer.reachedZero())
+      if (elementInsaneQuestions[index].timer.reachedZero())
         break;
     }
-   if (programmingLanguageEasyQuestions[index].isCorrect()) {
+   if (elementInsaneQuestions[index].isCorrect()) {
       CorrectSound.playOneShot();
-      if (programmingLanguageEasyQuestions[index].isSelected) {
+      if (elementInsaneQuestions[index].isSelected) {
         point += 10;
       } else {
         point += 15;
       }
     } else {
       WrongSound.playOneShot();
-      if (programmingLanguageEasyQuestions[index].isSelected) {
+      if (elementInsaneQuestions[index].isSelected) {
         point -= 7;
       } else {
         point -= 12;
