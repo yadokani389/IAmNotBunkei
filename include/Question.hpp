@@ -3,48 +3,56 @@
 #include <Siv3D.hpp>
 
 struct Question {
-  Question(const String& question, bool answer, const String& string, double stringSize)
-      : m_question(question), m_answer(answer), m_string(string), m_stringSize(stringSize), m_mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}), m_subFont(Font{FontMethod::MSDF, 48}) {}
-  Question(const String& question, bool answer, const Texture& texture)
-      : m_question(question), m_answer(answer), m_texture(texture), m_mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}), m_subFont(Font{FontMethod::MSDF, 48}) {}
+  Question(const String& _question, bool _answer, const String& _string, double _stringSize)
+      : question(_question),
+        answer(_answer),
+        string(_string),
+        stringSize(_stringSize),
+        mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
+        subFont(Font{FontMethod::MSDF, 48}) {}
+  Question(const String& _question, bool _answer, const Texture& _texture)
+      : question(_question),
+        answer(_answer),
+        texture(_texture.resized(400)),
+        mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
+        subFont(Font{FontMethod::MSDF, 48}) {}
 
-  const String m_question;
-  const bool m_answer;
-  const String m_string;
-  const double m_stringSize = 0;
-  const Texture m_texture;
-  const Font m_mainFont;
-  const Font m_subFont;
-  bool m_isSelected = false;
-  Timer m_timer{SecondsF{10}, StartImmediately::No};
+  const String question;
+  const bool answer;
+  const String string;
+  const double stringSize = 0;
+  const TextureRegion texture;
+  const Font mainFont;
+  const Font subFont;
+  bool isSelected = false;
+  Timer timer{SecondsF{10}, StartImmediately::No};
 
   inline void draw() const {
     // 青い四角を描く | Draw a rectangle
     Rect{5, 5, 789, 180}.draw(HSV{220, 0.8, 0.9});
     // 残り時間を描く | Draw the remaining time
-    Rect{5, 5, static_cast<int>(789 * m_timer.progress1_0()), 10}.draw(Palette::Greenyellow);
-    m_mainFont(m_timer.s()).draw(60, 670, 50, Palette::White);
+    Rect{5, 5, static_cast<int>(789 * timer.progress1_0()), 10}.draw(Palette::Greenyellow);
+    mainFont(timer.s()).draw(60, 670, 50, Palette::White);
     // 指定した範囲内にテキストを描く | Draw text within a specified area
-    m_mainFont(m_question).draw(45, Vec2{30, 35}, Palette::White);
-    m_subFont(U"の画像をすべて選択してください").draw(25, Vec2{30, 110}, Palette::White);
+    mainFont(question).draw(45, Vec2{30, 35}, Palette::White);
+    subFont(U"の画像をすべて選択してください").draw(25, Vec2{30, 110}, Palette::White);
 
-    if (m_string.isEmpty()) {
-      m_texture.draw(Arg::center(400, 390));
+    if (string.isEmpty()) {
+      texture.draw(Arg::center(400, 390));
     } else {
-      m_mainFont(m_string).draw(m_stringSize, Arg::center(400, 390), Palette::Black);
+      mainFont(string).draw(stringSize, Arg::center(400, 390), Palette::Black);
     }
 
     // 選択した際の描画処理
-    if (m_isSelected) {
+    if (isSelected) {
       // グレーの四角の描画
       Point rectTopLeft;
-      if (m_string.isEmpty()) {
-        const Size textureSize = m_texture.size();
-        Rect rect{textureSize};
+      if (string.isEmpty()) {
+        Rect rect{texture.size.asPoint()};
         rect.setCenter(400, 390).draw(ColorF{0.5, 0.5, 0.5, 0.5});
         rectTopLeft = rect.tl();
       } else {
-        const auto textRegion = m_mainFont(m_string).region(m_stringSize);
+        const auto textRegion = mainFont(string).region(stringSize);
         Rect rect{static_cast<int>(textRegion.w) + 20, static_cast<int>(textRegion.h) + 20};
         rect.setCenter(400, 390).draw(ColorF{0.5, 0.5, 0.5, 0.5});
         rectTopLeft = rect.tl();
@@ -58,19 +66,20 @@ struct Question {
   }
 
   inline void start() {
-    m_timer.setRemaining(SecondsF{10});
-    m_timer.start();
+    timer.setRemaining(SecondsF{10});
+    timer.start();
+    isSelected = false;
   }
 
   inline void update() {
     if (KeyEnter.down()) {
-      m_isSelected = true;
-      if (0.5 < m_timer.sF())
-        m_timer.setRemaining(SecondsF{0.5});
+      isSelected = true;
+      if (0.5 < timer.sF())
+        timer.setRemaining(SecondsF{0.5});
     }
   }
 
   inline bool isCorrect() {
-    return m_answer == m_isSelected;
+    return answer == isSelected;
   }
 };

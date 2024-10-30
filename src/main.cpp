@@ -260,7 +260,7 @@ void Main() {
       elementEasyQuestions[index].draw();
       elementEasyQuestions[index].update();
 
-      if (elementEasyQuestions[index].m_timer.reachedZero())
+      if (elementEasyQuestions[index].timer.reachedZero())
         break;
     }
 
