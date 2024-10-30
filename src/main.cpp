@@ -50,7 +50,7 @@ void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
     } else if (Key4.down()) {
       level = 4;
     }
-
+     
     boldFont(GetLevelInfo(level).first).draw(100, Vec2{50, 60}, GetLevelInfo(level).second);
 
     // スタート用
@@ -115,7 +115,7 @@ void Main() {
       Question{U"希ガス", true, U"Kr クリプトン", 120},
       Question{U"希ガス", true, U"Xe キセノン", 120},
       Question{U"希ガス", true, U"Rm ラドン", 120},
-      Question{U"希ガス", true, U"Rm アルゴン", 120},
+      Question{U"希ガス", true, U"Ar アルゴン", 120},
 
       Question{U"希ガス", false, U"H 水素", 120},
       Question{U"希ガス", false, U"Ti チタン", 120},
