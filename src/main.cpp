@@ -109,6 +109,25 @@ void Main() {
   // const Audio WrongSound = Audio(U"engine/resources/sounds/Quiz-Wrong_Buzzer02-2.mp3");
 
   Array<Question> elementEasyQuestions = {
+      Question{U"存在する元素", true, U"Se セレン", 120},
+      Question{U"存在する元素", true, U"P リン", 120},
+      Question{U"存在する元素", true, U"Xe キセノン", 120},
+      Question{U"存在する元素", true, U"Ne ネオン", 120},
+      Question{U"存在する元素", true, U"Nb ニオブ", 120},
+      Question{U"存在する元素", true, U"Nh ニホニウム", 110},
+      Question{U"存在する元素", true, U"Cf カリホルニウム", 97},
+
+      Question{U"存在する元素", false, U"Sr セミリウム", 120},
+      Question{U"存在する元素", false, U"Cn カレニウム", 120},
+      Question{U"存在する元素", false, U"Gs ガリレシウム", 100},
+      Question{U"存在する元素", false, U"Ic アイスクリウム", 120},
+      Question{U"存在する元素", false, U"", 120},
+      Question{U"存在する元素", false, U"N 窒素", 120},
+      Question{U"存在する元素", false, U"Na ナトリウム", 110},
+      Question{U"存在する元素", false, U"Ca カルシウム", 110},
+      Question{U"存在する元素", false, U"Al アルミニウム", 100},
+  };
+  Array<Question> elementNormalQuestions = {
       Question{U"希ガス", true, U"He ヘリウム", 120},
       Question{U"希ガス", true, U"Ne ネオン", 120},
       Question{U"希ガス", true, U"Kr クリプトン", 110},
@@ -118,7 +137,7 @@ void Main() {
 
       Question{U"希ガス", false, U"H 水素", 120},
       Question{U"希ガス", false, U"Ti チタン", 120},
-      Question{U"希ガス", true, U"W タングステン", 100},
+      Question{U"希ガス", false, U"W タングステン", 100},
       Question{U"希ガス", false, U"Li リチウム", 120},
       Question{U"希ガス", false, U"C 炭素", 120},
       Question{U"希ガス", false, U"N 窒素", 120},
@@ -126,7 +145,7 @@ void Main() {
       Question{U"希ガス", false, U"Ca カルシウム", 110},
       Question{U"希ガス", false, U"Al アルミニウム", 100},
   };
-  Array<Question> elementNomalQuestions = {
+  Array<Question> elementHardQuestions = {
       Question{U"アルカリ金属(１族)", true, U"Li リチウム", 120},
       Question{U"アルカリ金属(１族)", true, U"Na ナトリウム", 110},
       Question{U"アルカリ金属(１族)", true, U"K カリウム", 120},
@@ -147,7 +166,7 @@ void Main() {
       Question{U"アルカリ金属(１族)", false, U"Os オスミウム", 120},
       Question{U"アルカリ金属(１族)", false, U"W タングステン", 120},
   };
-  Array<Question> elementHardQuestions = {
+  Array<Question> elementInsaneQuestions = {
       Question{U"ランタノイド元素", true, U"Ce セリウム", 120},
       Question{U"ランタノイド元素", true, U"Pr プラセオジム", 100},
       Question{U"ランタノイド元素", true, U"Nd ネオジム", 120},
@@ -180,13 +199,26 @@ void Main() {
       Question{U"素数", true, Texture{U"resources/assets/31.png"}},
       Question{U"素数", true, Texture{U"resources/assets/47.png"}},
       Question{U"素数", true, Texture{U"resources/assets/107.jpg"}},
-      Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
 
       Question{U"素数", false, Texture{U"resources/assets/51(not).jpg"}},
       Question{U"素数", false, Texture{U"resources/assets/1(not).jpg"}},
   };
   Array<Question> primeNormalQuestions = {
+      Question{U"素数", true, Texture{U"resources/assets/19.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/31.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/47.png"}},
       Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/107.jpg"}},
+
+      Question{U"素数", false, Texture{U"resources/assets/51(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/1(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/141(not).png"}},
+      Question{U"素数", false, Texture{U"resources/assets/253(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/279(not).jpg"}},
+  };
+  Array<Question> primeHardQuestions = {
+      Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/107.jpg"}},
       Question{U"素数", true, Texture{U"resources/assets/413.png"}},
       Question{U"素数", true, Texture{U"resources/assets/599.png"}},
 
@@ -195,12 +227,13 @@ void Main() {
       Question{U"素数", false, Texture{U"resources/assets/279(not).jpg"}},
       Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
   };
-  Array<Question> primeHardQuestions = {
+
+  Array<Question> primeInsaneQuestions = {
       Question{U"素数", true, Texture{U"resources/assets/599.png"}},
       Question{U"素数", true, Texture{U"resources/assets/6101.jpg"}},
       Question{U"素数", true, Texture{U"resources/assets/7103.jpg"}},
       Question{U"素数", true, Texture{U"resources/assets/8849.png"}},
-      Question{U"素数", false, Texture{U"resources/assets/15739.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/15739.jpg"}},
 
       Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
       Question{U"素数", false, Texture{U"resources/assets/4653(not).jpg"}},
@@ -216,7 +249,7 @@ void Main() {
   auto [a, b] = Rnd(level);
   Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
 
-  Timer gameTimer{Seconds{60}, StartImmediately::Yes};
+  Timer gameTimer{Seconds{90}, StartImmediately::Yes};
 
   // ゲーム画面
   size_t index = 0;
@@ -232,10 +265,11 @@ void Main() {
     }
 
     if (elementEasyQuestions[index].isCorrect()) {
-      point++;
+      point += 10;
       CorrectSound.playOneShot();
     } else {
       WrongSound.playOneShot();
+      point -= 5;
     }
 
     index++;
@@ -247,15 +281,15 @@ void Main() {
   while (System::Update()) {
     String rankText = U"";
 
-    if (point < 5)
+    if (point < 50)
       rankText = U"文系？";
-    else if (point < 10)
+    else if (point < 100)
       rankText = U"ちょっと理系";
-    else if (point < 15)
+    else if (point < 150)
       rankText = U"まぁまぁ理系";
-    else if (point < 20)
+    else if (point < 200)
       rankText = U"理系";
-    else if (point < 25)
+    else if (point < 250)
       rankText = U"伝説の理系";
     else
       rankText = U"TOP OF 理系";
