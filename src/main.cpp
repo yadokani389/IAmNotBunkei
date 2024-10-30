@@ -22,7 +22,6 @@ std::pair<int, int> Rnd(int level) {
       b = Random(lim - 180, lim);
     }
   }
-
   return std::make_pair(a, b);
 }
 
@@ -110,71 +109,147 @@ void Main() {
   // const Audio WrongSound = Audio(U"engine/resources/sounds/Quiz-Wrong_Buzzer02-2.mp3");
 
   Array<Question> elementEasyQuestions = {
+      Question{U"存在する元素", true, U"Se セレン", 120},
+      Question{U"存在する元素", true, U"P リン", 120},
+      Question{U"存在する元素", true, U"Xe キセノン", 120},
+      Question{U"存在する元素", true, U"Ne ネオン", 120},
+      Question{U"存在する元素", true, U"Nb ニオブ", 120},
+      Question{U"存在する元素", true, U"Nh ニホニウム", 110},
+      Question{U"存在する元素", true, U"Cf カリホルニウム", 97},
+
+      Question{U"存在する元素", false, U"Sr セミリウム", 120},
+      Question{U"存在する元素", false, U"Cn カレニウム", 120},
+      Question{U"存在する元素", false, U"Gs ガリレシウム", 100},
+      Question{U"存在する元素", false, U"Ic アイスクリウム", 120},
+      Question{U"存在する元素", false, U"", 120},
+      Question{U"存在する元素", false, U"N 窒素", 120},
+      Question{U"存在する元素", false, U"Na ナトリウム", 110},
+      Question{U"存在する元素", false, U"Ca カルシウム", 110},
+      Question{U"存在する元素", false, U"Al アルミニウム", 100},
+  };
+  Array<Question> elementNormalQuestions = {
       Question{U"希ガス", true, U"He ヘリウム", 120},
       Question{U"希ガス", true, U"Ne ネオン", 120},
-      Question{U"希ガス", true, U"Kr クリプトン", 120},
+      Question{U"希ガス", true, U"Kr クリプトン", 110},
       Question{U"希ガス", true, U"Xe キセノン", 120},
       Question{U"希ガス", true, U"Rm ラドン", 120},
-      Question{U"希ガス", true, U"Rm アルゴン", 120},
+      Question{U"希ガス", true, U"Ar アルゴン", 120},
 
       Question{U"希ガス", false, U"H 水素", 120},
       Question{U"希ガス", false, U"Ti チタン", 120},
-      Question{U"希ガス", true, U"W タングステン", 120},
+      Question{U"希ガス", false, U"W タングステン", 100},
       Question{U"希ガス", false, U"Li リチウム", 120},
       Question{U"希ガス", false, U"C 炭素", 120},
       Question{U"希ガス", false, U"N 窒素", 120},
-      Question{U"希ガス", false, U"Na ナトリウム", 120},
-      Question{U"希ガス", false, U"Ca カルシウム", 120},
-      Question{U"希ガス", false, U"Al アルミニウム", 120},
-  };
-  Array<Question> elementNomalQuestions = {
-      Question{U"アルカリ金属(１族)", true, U"Li リチウム", 120},
-      Question{U"アルカリ金属(１族)", true, U"Na ナトリウム", 120},
-      Question{U"アルカリ金属(１族)", true, U"K カリウム", 120},
-      Question{U"アルカリ金属(１族)", true, U"Rb ルビジウム", 120},
-      Question{U"アルカリ金属(１族)", true, U"Cs セシウム", 120},
-      Question{U"アルカリ金属(１族)", true, U"Fr フランシウム", 120},
-
-      Question{U"アルカリ金属(１族)", false, U"H 水素", 120},
-      Question{U"アルカリ金属(１族)", false, U"Mg マグネシウム", 120},
-      Question{U"アルカリ金属(１族)", false, U"Ba バリウム", 120},
-      Question{U"アルカリ金属(１族)", false, U"Nb ニオブ", 120},
-      Question{U"アルカリ金属(１族)", false, U"Po ポロニウム", 120},
-      Question{U"アルカリ金属(１族)", false, U"Nh ニホニウム", 120},
-      Question{U"アルカリ金属(１族)", false, U"Sb アンチモン", 120},
+      Question{U"希ガス", false, U"Na ナトリウム", 110},
+      Question{U"希ガス", false, U"Ca カルシウム", 110},
+      Question{U"希ガス", false, U"Al アルミニウム", 100},
   };
   Array<Question> elementHardQuestions = {
-      Question{U"ランタノイド元素", true, U"Ce セリウム", 120},
-      Question{U"ランタノイド元素", true, U"Pr プラセオジム", 120},
-      Question{U"ランタノイド元素", true, U"Nd ネオジム", 120},
-      Question{U"ランタノイド元素", true, U"Pm プロメチウム", 120},
-      Question{U"ランタノイド元素", true, U"Sm サマリウム", 120},
-      Question{U"ランタノイド元素", true, U"Eu ユウロビウム", 120},
-      Question{U"ランタノイド元素", true, U"Gd ガドリニウム", 120},
-      Question{U"ランタノイド元素", true, U"Tb テルビウム", 120},
-      Question{U"ランタノイド元素", true, U"Dy ジスプロニウム", 120},
-      Question{U"ランタノイド元素", true, U"Ho ホルミウム", 120},
-      Question{U"ランタノイド元素", true, U"Er エルビウム", 120},
-      Question{U"ランタノイド元素", true, U"Er ツリウム", 120},
-      Question{U"ランタノイド元素", true, U"Yb イッテルビウム", 120},
-      Question{U"ランタノイド元素", true, U"Er ルテチウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Li リチウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Na ナトリウム", 110},
+      Question{U"アルカリ金属(１族)", true, U"K カリウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Rb ルビジウム", 110},
+      Question{U"アルカリ金属(１族)", true, U"Cs セシウム", 120},
+      Question{U"アルカリ金属(１族)", true, U"Fr フランシウム", 100},
 
-      Question{U"ランタノイド元素", false, U"Np ネプツニウム", 120},
-      Question{U"ランタノイド元素", false, U"Am アメリシウム", 120},
-      Question{U"ランタノイド元素", true, U"Cf カリホルニウム", 120},
-      Question{U"ランタノイド元素", false, U"Fm フェルミウム", 120},
-      Question{U"ランタノイド元素", false, U"Lr ローレンシウム", 120},
-      Question{U"ランタノイド元素", false, U"Md メンデレビウム", 120},
-      Question{U"ランタノイド元素", false, U"Lv リバボリウム", 120},
-      Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 120},
-      Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"H 水素", 120},
+      Question{U"アルカリ金属(１族)", false, U"Mg マグネシウム", 100},
+      Question{U"アルカリ金属(１族)", false, U"Ba バリウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"Nb ニオブ", 120},
+      Question{U"アルカリ金属(１族)", false, U"Po ポロニウム", 110},
+      Question{U"アルカリ金属(１族)", false, U"Nh ニホニウム", 110},
+      Question{U"アルカリ金属(１族)", false, U"Sb アンチモン", 110},
+      Question{U"アルカリ金属(１族)", false, U"Kr クリプトン", 120},
+      Question{U"アルカリ金属(１族)", false, U"Fe 鉄", 120},
+      Question{U"アルカリ金属(１族)", false, U"Ti チタン", 120},
+      Question{U"アルカリ金属(１族)", false, U"Os オスミウム", 120},
+      Question{U"アルカリ金属(１族)", false, U"W タングステン", 120},
   };
+  Array<Question> elementInsaneQuestions = {
+      Question{U"ランタノイド元素", true, U"Ce セリウム", 120},
+      Question{U"ランタノイド元素", true, U"Pr プラセオジム", 100},
+      Question{U"ランタノイド元素", true, U"Nd ネオジム", 120},
+      Question{U"ランタノイド元素", true, U"Pm プロメチウム", 100},
+      Question{U"ランタノイド元素", true, U"Sm サマリウム", 110},
+      Question{U"ランタノイド元素", true, U"Eu ユウロビウム", 100},
+      Question{U"ランタノイド元素", true, U"Gd ガドリニウム", 100},
+      Question{U"ランタノイド元素", true, U"Tb テルビウム", 110},
+      Question{U"ランタノイド元素", true, U"Dy ジスプロニウム", 97},
+      Question{U"ランタノイド元素", true, U"Ho ホルミウム", 110},
+      Question{U"ランタノイド元素", true, U"Er エルビウム", 110},
+      Question{U"ランタノイド元素", true, U"Er ツリウム", 120},
+      Question{U"ランタノイド元素", true, U"Yb イッテルビウム", 97},
+      Question{U"ランタノイド元素", true, U"Er ルテチウム", 110},
+
+      Question{U"ランタノイド元素", false, U"Np ネプツニウム", 100},
+      Question{U"ランタノイド元素", false, U"Am アメリシウム", 100},
+      Question{U"ランタノイド元素", true, U"Cf カリホルニウム", 97},
+      Question{U"ランタノイド元素", false, U"Fm フェルミウム", 100},
+      Question{U"ランタノイド元素", false, U"Lr ローレンシウム", 97},
+      Question{U"ランタノイド元素", false, U"Md メンデレビウム", 97},
+      Question{U"ランタノイド元素", false, U"Lv リバモリウム", 100},
+      Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 97},
+      Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 90},
+  };
+  Array<Question> primeEasyQuestions = {
+      Question{U"素数", true, Texture{U"resources/assets/5.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/7.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/19.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/31.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/47.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/107.jpg"}},
+
+      Question{U"素数", false, Texture{U"resources/assets/51(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/1(not).jpg"}},
+  };
+  Array<Question> primeNormalQuestions = {
+      Question{U"素数", true, Texture{U"resources/assets/19.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/31.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/47.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/107.jpg"}},
+
+      Question{U"素数", false, Texture{U"resources/assets/51(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/1(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/141(not).png"}},
+      Question{U"素数", false, Texture{U"resources/assets/253(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/279(not).jpg"}},
+  };
+  Array<Question> primeHardQuestions = {
+      Question{U"素数", true, Texture{U"resources/assets/109.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/107.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/413.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/599.png"}},
+
+      Question{U"素数", false, Texture{U"resources/assets/141(not).png"}},
+      Question{U"素数", false, Texture{U"resources/assets/253(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/279(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
+  };
+
+  Array<Question> primeInsaneQuestions = {
+      Question{U"素数", true, Texture{U"resources/assets/599.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/6101.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/7103.jpg"}},
+      Question{U"素数", true, Texture{U"resources/assets/8849.png"}},
+      Question{U"素数", true, Texture{U"resources/assets/15739.jpg"}},
+
+      Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
+      Question{U"素数", false, Texture{U"resources/assets/4653(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/5201(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/7119(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/7203(not).jpg"}},
+      Question{U"素数", false, Texture{U"resources/assets/8201(not).jpg"}},
+
+  };
+
   Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
 
   auto [a, b] = Rnd(level);
   Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
 
-  Timer gameTimer{Seconds{60}, StartImmediately::Yes};
+  Timer gameTimer{Seconds{90}, StartImmediately::Yes};
 
   // ゲーム画面
   size_t index = 0;
@@ -190,10 +265,11 @@ void Main() {
     }
 
     if (elementEasyQuestions[index].isCorrect()) {
-      point++;
+      point += 10;
       CorrectSound.playOneShot();
     } else {
       WrongSound.playOneShot();
+      point -= 5;
     }
 
     index++;
@@ -205,15 +281,15 @@ void Main() {
   while (System::Update()) {
     String rankText = U"";
 
-    if (point < 5)
+    if (point < 50)
       rankText = U"文系？";
-    else if (point < 10)
+    else if (point < 100)
       rankText = U"ちょっと理系";
-    else if (point < 15)
+    else if (point < 150)
       rankText = U"まぁまぁ理系";
-    else if (point < 20)
+    else if (point < 200)
       rankText = U"理系";
-    else if (point < 25)
+    else if (point < 250)
       rankText = U"伝説の理系";
     else
       rankText = U"TOP OF 理系";
