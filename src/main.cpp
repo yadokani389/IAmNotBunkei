@@ -115,17 +115,15 @@ void Main() {
       Question{U"存在する元素", true, U"Ne ネオン", 120},
       Question{U"存在する元素", true, U"Nb ニオブ", 120},
       Question{U"存在する元素", true, U"Nh ニホニウム", 110},
-      Question{U"存在する元素", true, U"Cf カリホルニウム", 97},
+      Question{U"存在する元素", true, U"Cf カリホルニウム", 90},
+      Question{U"存在する元素", true, U"Pr プラセオジム", 100},
 
       Question{U"存在する元素", false, U"Sr セミリウム", 120},
       Question{U"存在する元素", false, U"Cn カレニウム", 120},
       Question{U"存在する元素", false, U"Gs ガリレシウム", 100},
-      Question{U"存在する元素", false, U"Ic アイスクリウム", 120},
-      Question{U"存在する元素", false, U"", 120},
-      Question{U"存在する元素", false, U"N 窒素", 120},
-      Question{U"存在する元素", false, U"Na ナトリウム", 110},
-      Question{U"存在する元素", false, U"Ca カルシウム", 110},
-      Question{U"存在する元素", false, U"Al アルミニウム", 100},
+      Question{U"存在する元素", false, U"Ic アイスクリウム", 90},
+      Question{U"存在する元素", false, U"Kn カニウム", 120},
+      Question{U"存在する元素", false, U"M マメジウム", 110},
   };
   Array<Question> elementNormalQuestions = {
       Question{U"希ガス", true, U"He ヘリウム", 120},
@@ -175,22 +173,22 @@ void Main() {
       Question{U"ランタノイド元素", true, U"Eu ユウロビウム", 100},
       Question{U"ランタノイド元素", true, U"Gd ガドリニウム", 100},
       Question{U"ランタノイド元素", true, U"Tb テルビウム", 110},
-      Question{U"ランタノイド元素", true, U"Dy ジスプロニウム", 97},
+      Question{U"ランタノイド元素", true, U"Dy ジスプロニウム", 85},
       Question{U"ランタノイド元素", true, U"Ho ホルミウム", 110},
       Question{U"ランタノイド元素", true, U"Er エルビウム", 110},
       Question{U"ランタノイド元素", true, U"Er ツリウム", 120},
-      Question{U"ランタノイド元素", true, U"Yb イッテルビウム", 97},
+      Question{U"ランタノイド元素", true, U"Yb イッテルビウム", 85},
       Question{U"ランタノイド元素", true, U"Er ルテチウム", 110},
 
       Question{U"ランタノイド元素", false, U"Np ネプツニウム", 100},
       Question{U"ランタノイド元素", false, U"Am アメリシウム", 100},
-      Question{U"ランタノイド元素", true, U"Cf カリホルニウム", 97},
+      Question{U"ランタノイド元素", true, U"Cf カリホルニウム", 85},
       Question{U"ランタノイド元素", false, U"Fm フェルミウム", 100},
-      Question{U"ランタノイド元素", false, U"Lr ローレンシウム", 97},
-      Question{U"ランタノイド元素", false, U"Md メンデレビウム", 97},
+      Question{U"ランタノイド元素", false, U"Lr ローレンシウム", 75},
+      Question{U"ランタノイド元素", false, U"Md メンデレビウム", 85},
       Question{U"ランタノイド元素", false, U"Lv リバモリウム", 100},
-      Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 97},
-      Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 90},
+      Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 85},
+      Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 85},
   };
   Array<Question> primeEasyQuestions = {
       Question{U"素数", true, Texture{U"resources/assets/5.jpg"}},
@@ -268,23 +266,30 @@ void Main() {
 
   // ゲーム画面
   size_t index = 0;
-  size_t point = 0;
-  while (!gameTimer.reachedZero() && index < elementEasyQuestions.size()) {
-    elementEasyQuestions[index].start();
+  int32 point = 0;
+  while (!gameTimer.reachedZero() && index < programmingLanguageEasyQuestions.size()) {
+    programmingLanguageEasyQuestions[index].start();
     while (System::Update()) {
-      elementEasyQuestions[index].draw();
-      elementEasyQuestions[index].update();
-
-      if (elementEasyQuestions[index].timer.reachedZero())
+      programmingLanguageEasyQuestions[index].draw();
+      programmingLanguageEasyQuestions[index].update();
+    
+      if (programmingLanguageEasyQuestions[index].timer.reachedZero())
         break;
     }
-
-    if (elementEasyQuestions[index].isCorrect()) {
-      point += 10;
+   if (programmingLanguageEasyQuestions[index].isCorrect()) {
       CorrectSound.playOneShot();
+      if (programmingLanguageEasyQuestions[index].isSelected) {
+        point += 10;
+      } else {
+        point += 15;
+      }
     } else {
       WrongSound.playOneShot();
-      point -= 5;
+      if (programmingLanguageEasyQuestions[index].isSelected) {
+        point -= 7;
+      } else {
+        point -= 12;
+      }
     }
 
     index++;
