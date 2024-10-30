@@ -227,7 +227,6 @@ void Main() {
       Question{U"素数", false, Texture{U"resources/assets/279(not).jpg"}},
       Question{U"素数", false, Texture{U"resources/assets/513(not).png"}},
   };
-
   Array<Question> primeInsaneQuestions = {
       Question{U"素数", true, Texture{U"resources/assets/599.png"}},
       Question{U"素数", true, Texture{U"resources/assets/6101.jpg"}},
@@ -244,21 +243,73 @@ void Main() {
 
   };
   Array<Question> programmingLanguageEasyQuestions = {
-      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust-logo.png"}},
-      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/python-logo.png"}},
-      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/ruby-logo.png"}},
-      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/julia-logo.png"}},
-      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/java-logo.png"}},
-      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/bash-logo.png"}},
-      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/c-logo.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/java.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Python-Emblem.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/c-gengo.png"}},
 
-      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/firebase-logo.png"}},
-      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/scratch-logo.png"}},
-      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/ubuntu-logo.png"}},
-      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/v-logo.png"}},
-      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/vsc-logo.png"}},
-      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/roblox-logo.png"}},
-      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/overwatch-logo.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Apex.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/EA.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Valorant.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/OW.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Norton.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Carp.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/itoyokado.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/LarryBird.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Linux.png"}},
+
+  };
+  Array<Question> programmingLanguageNormalQuestions = {
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/java.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Python-Emblem.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/c-gengo.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/cpp.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Csharp.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/JavaScript.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Ruby.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Rust.png"}},
+      
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Linux.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Notion.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Roblox.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/RustGame.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Winzip.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/carp-2.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Carp.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/chuo.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Reds.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/KC.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/LS.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/SD.png"}},
+
+  };
+  Array<Question> programmingLanguageHardQuestions = {
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/JavaScript.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Ruby.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Rust.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/go.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Perl.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/TypeScript.png"}},
+
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Linux.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Entraid.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Firebase.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Linux.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Notion.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/plumbob.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Slack.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Ubuntu.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Winrar.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/Winzip.png"}},
+
+  };
+  Array<Question> programmingLanguageInsaneQuestions = {
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Rust.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/go.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Perl.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/TypeScript.png"}},
+      
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/plumbobs.png"}},
+
   };
 
   auto [a, b] = Rnd(level);
