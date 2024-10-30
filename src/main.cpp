@@ -243,8 +243,23 @@ void Main() {
       Question{U"素数", false, Texture{U"resources/assets/8201(not).jpg"}},
 
   };
+  Array<Question> programmingLanguageEasyQuestions = {
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust-logo.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/python-logo.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/ruby-logo.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/julia-logo.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/java-logo.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/bash-logo.png"}},
+      Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/c-logo.png"}},
 
-  Question testQuestion{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/rust_logo.png"}};
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/firebase-logo.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/scratch-logo.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/ubuntu-logo.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/v-logo.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/vsc-logo.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/roblox-logo.png"}},
+      Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/overwatch-logo.png"}},
+  };
 
   auto [a, b] = Rnd(level);
   Question coprimeQuestion{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120};
