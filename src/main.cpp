@@ -128,11 +128,28 @@ bool LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
 
     if (KeySpace.pressed()) return true;
 
-    if (Button(Scene::Width() - 150, Scene::Center().y + 300, 100, 35, smallFont, U"Cancel")) return false;
+    if (Button(Scene::Width() - 100, 50, 100, 35, smallFont, U"Cancel")) return false;
   }
 
   return false;
 }
+struct ScoreEffect : IEffect {
+  Vec2 m_start;
+
+  int32 m_score;
+
+  Font m_font;
+
+  ScoreEffect(const Vec2& start, int32 score, const Font& font)
+      : m_start{start}, m_score{score}, m_font{font} {}
+
+  bool update(double t) override {
+    Color color(Palette::Red);
+    if (m_score < 0) color = Color(Palette::Blue);
+    m_font(m_score).drawAt(m_start.movedBy(0, t * -120), color);
+    return (t < 0.5);
+  }
+};
 
 void Main() {
   Scene::SetResizeMode(ResizeMode::Keep);
@@ -148,6 +165,9 @@ void Main() {
   // テキストに含まれる絵文字のためのフォントを作成し、font に追加する | Create a font for emojis in text and add it to font as a fallback
   const Font emojiFont{48, Typeface::ColorEmoji};
   boldFont.addFallback(emojiFont);
+  // Effect関係
+  Effect effect;
+  const Font effectFont{FontMethod::MSDF, 96, Typeface::Bold};
 
   int level = 0;  // レベルの変数
   // 通信関係
@@ -556,7 +576,7 @@ void Main() {
       while (System::Update()) {
         question.draw();
         question.update();
-
+        effect.update();
         if (question.timer.reachedZero())
           break;
 
@@ -605,7 +625,8 @@ void Main() {
 
       point += deltaPoint;
       server.sendPoint(deltaPoint);
-
+      effect.add<ScoreEffect>(Scene::Center(), deltaPoint, effectFont);
+      effect.update();
       Console << U"次の問題へ";
     }
     if (shouldQuit)
