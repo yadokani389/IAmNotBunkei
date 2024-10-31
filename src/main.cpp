@@ -11,7 +11,7 @@ bool Coprime(int a, int b) {
 // 互いに異なる2つの数字を出す a, bどちらかは奇数
 std::pair<int, int> Rnd(int level) {
   int lim;
-  lim = level * level * 200;
+  lim = (level + 1) * (level + 1) * 200;
   int a = Random(2, lim);
   int b = Random(2, lim);
   if (IsEven(a)) {
@@ -26,12 +26,23 @@ std::pair<int, int> Rnd(int level) {
   return std::make_pair(a, b);
 }
 
+void MakeCoprimeQuestions(Array<Array<Array<Question>>>& questions) {
+  Array<Array<Question>> coprimeQuestions{4};
+  for (size_t i = 0; i < 4; i++) {
+    for (size_t j = 0; j < 20; j++) {
+      auto [a, b] = Rnd(i);
+      coprimeQuestions[i].push_back(Question{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120});
+    }
+  }
+  questions.push_back(coprimeQuestions);
+}
+
 std::pair<String, Color> GetLevelInfo(int level) {
-  if (level == 1)
+  if (level == 0)
     return std::make_pair(U"EASY", ColorF{0.85, 0.6, 0.73});
-  else if (level == 2)
+  else if (level == 1)
     return std::make_pair(U"NORMAL", ColorF{0.3, 0.56, 0.23});
-  else if (level == 3)
+  else if (level == 2)
     return std::make_pair(U"HARD", ColorF{0.68, 0.26, 0.15});
   else
     return std::make_pair(U"INSANE", ColorF{0.36, 0.06, 0.45});
@@ -58,13 +69,13 @@ void StartMenu(int& level, const Font& boldFont, const Font& regularFont2, Serve
   while (System::Update()) {
     server.update();
     if (Key1.down()) {
-      level = 1;
+      level = 0;
     } else if (Key2.down()) {
-      level = 2;
+      level = 1;
     } else if (Key3.down()) {
-      level = 3;
+      level = 2;
     } else if (Key4.down()) {
-      level = 4;
+      level = 3;
     }
 
     boldFont(GetLevelInfo(level).first).draw(100, Vec2{50, 60}, GetLevelInfo(level).second);
@@ -134,14 +145,14 @@ void Main() {
   const Font emojiFont{48, Typeface::ColorEmoji};
   boldFont.addFallback(emojiFont);
 
-  int level = 1;  // レベルの変数
+  int level = 0;  // レベルの変数
   // 通信関係
 
   Server server;
 
   // ここにIPアドレスとポート番号を入力
   IPv4Address serverAddress;
-  constexpr uint16 port = 80;
+  constexpr uint16 port = 5000;
 
   while (System::Update()) {
     // hostとしてスタート
@@ -176,31 +187,13 @@ void Main() {
         boldFont(U"Connecting...").drawAt(Scene::Center(), Palette::Darkgray);
         System::Sleep(10);
       }
-      if (done) break;
-    }
-  }
-
-  // スタート画面
-
-  if (server.isHost) {
-    LoadingMenu(server, boldFont, smallBoldFont);
-    StartMenu(level, boldFont, regularFont2, server);
-  }
-
-  if (server.isHost) {
-    server.sendStart(level);
-  } else {
-    while (System::Update()) {
-      boldFont(U"Waiting for game start...").drawAt(Scene::Center(), Palette::Darkgray);
-      if (server.receiveStart(level)) {
-        Console << U"Game start received!";
+      if (done)
         break;
-      }
-
-      server.update();
-      System::Sleep(10);
     }
   }
+
+  if (server.isHost)
+    LoadingMenu(server, boldFont, smallBoldFont);
 
   // Audio関係
   const Audio CorrectSound = Audio(U"resources/sounds/Quiz-Correct_Answer01-1.mp3");
@@ -209,7 +202,7 @@ void Main() {
   // const Audio CorrectSound = Audio(U"engine/resources/sounds/Quiz-Correct_Answer01-1.mp3");
   // const Audio WrongSound = Audio(U"engine/resources/sounds/Quiz-Wrong_Buzzer02-2.mp3");
 
-  Array<Array<Array<Question> > > questions = {
+  Array<Array<Array<Question>>> questions = {
       {
           // element
           {
@@ -460,121 +453,155 @@ void Main() {
           },
       }};
 
-  {
-    Array<Array<Question> > coprimeQuestions{4};
-    for (size_t i = 0; i < 4; i++) {
-      auto [a, b] = Rnd(level);
-      coprimeQuestions[i].push_back(Question{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120});
-    }
-    questions.push_back(coprimeQuestions);
-  }
+  MakeCoprimeQuestions(questions);
 
-  Array<Array<std::deque<size_t> > > indexes;
+  Array<Array<std::deque<size_t>>> indexes;
   for (const auto& q : questions) {
-    Array<std::deque<size_t> > temp{q.size()};
+    Array<std::deque<size_t>> temp{q.size()};
     for (size_t i = 0; i < q.size(); i++) {
       temp[i] = std::deque<size_t>(q[i].size());
       std::iota(temp[i].begin(), temp[i].end(), 0);
-      Shuffle(temp[i].begin(), temp[i].end());
     }
     indexes.push_back(temp);
   }
   Array<size_t> categoryIndexes(questions.size());
   std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
-  Shuffle(categoryIndexes.begin(), categoryIndexes.end());
   Console << categoryIndexes;
 
-  Timer gameTimer{Seconds{90}, StartImmediately::Yes};
+  while (true) {
+    // 問題の生成
+    questions.pop_back();
+    MakeCoprimeQuestions(questions);
 
-  // ゲーム画面
-  ssize_t point = 0;
-  size_t category = 0;
-  int32 categoryUpdate = gameTimer.s() / questions.size();
-  int32 nextCategoryUpdate = gameTimer.s() - categoryUpdate;
-  while (!gameTimer.reachedZero() && category < questions.size()) {
-    if (gameTimer.s() < nextCategoryUpdate) {
-      category++;
-      nextCategoryUpdate -= categoryUpdate;
-    }
-    size_t nowCategory = categoryIndexes[category];
-    if (indexes[nowCategory].size() <= level - 1 || indexes[nowCategory][level - 1].empty()) {
-      category++;
-      nextCategoryUpdate -= categoryUpdate;
-      continue;
-    }
-    size_t nowIndex = indexes[nowCategory][level - 1].front();
-    indexes[nowCategory][level - 1].pop_front();
-    auto& question = questions[nowCategory][level - 1][nowIndex];
+    // 問題をシャッフル
+    for (auto& index : indexes)
+      for (auto& i : index)
+        Shuffle(i.begin(), i.end());
+    Shuffle(categoryIndexes.begin(), categoryIndexes.end());
 
-    question.start();
-    while (System::Update()) {
-      question.draw();
-      question.update();
-
-      if (question.timer.reachedZero())
-        break;
-    }
-
-    if (question.isCorrect()) {
-      point += 10;
-      CorrectSound.playOneShot();
-      if (question.isSelected) {
-        point += 10;
-      } else {
-        point += 15;
-      }
-    } else {
-      WrongSound.playOneShot();
-      if (question.isSelected) {
-        point -= 7;
-      } else {
-        point -= 12;
-      }
-    }
-
-    Console << U"次の問題へ";
-  }
-
-  if (server.isHost) {
-    size_t receivedAmount = 0;
-    while (receivedAmount < server.sessionIds.size()) {
-      server.update();
-      System::Sleep(10);
-      server.receiveScore(point, receivedAmount);
-    }
-  } else {
-    server.update();
-    server.sendScore(point);
-  }
-
-  Console << U"リザルト画面";
-  // リザルト画面
-
-  while (System::Update()) {
+    // スタート画面
     if (server.isHost) {
-      server.update();
-      String rankText = U"";
+      StartMenu(level, boldFont, regularFont2, server);
+    }
 
-      if (point < 50)
-        rankText = U"文系？";
-      else if (point < 100)
-        rankText = U"ちょっと理系";
-      else if (point < 150)
-        rankText = U"まぁまぁ理系";
-      else if (point < 200)
-        rankText = U"理系";
-      else if (point < 250)
-        rankText = U"伝説の理系";
-      else
-        rankText = U"TOP OF 理系";
-
-      auto xAdvance = static_cast<int>(boldFont(U"難易度:  ").getXAdvances(50).sum());
-      boldFont(U"難易度:  ").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4), Palette::Black);
-      boldFont(GetLevelInfo(level).first).draw(50, Arg::leftCenter(Scene::Height() / 4 + xAdvance, Scene::Height() / 4), GetLevelInfo(level).second);
-      boldFont(U"スコア:  ", point).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
-      boldFont(U"ランク:  ", rankText).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 3), Palette::Black);
+    if (server.isHost) {
+      server.sendStart(level);
     } else {
-      boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+      while (System::Update()) {
+        boldFont(U"Waiting for game start...").drawAt(Scene::Center(), Palette::Darkgray);
+        if (server.receiveStart(level)) {
+          Console << U"Game start received!";
+          break;
+        }
+
+        server.update();
+        System::Sleep(10);
+      }
+    }
+
+    Timer gameTimer{Seconds{90}, StartImmediately::Yes};
+
+    // ゲーム画面
+    ssize_t point = 0;
+    size_t category = 0;
+    const int32 categoryUpdate = gameTimer.s() / categoryIndexes.size();
+    int32 nextCategoryUpdate = gameTimer.s() - categoryUpdate;
+    bool shouldQuit = false;
+    while (!gameTimer.reachedZero() && category < categoryIndexes.size()) {
+      if (gameTimer.s() < nextCategoryUpdate) {
+        category++;
+        nextCategoryUpdate -= categoryUpdate;
+        continue;
+      }
+      size_t nowCategory = categoryIndexes[category];
+      if (indexes[nowCategory].size() <= level || indexes[nowCategory][level].empty()) {
+        category++;
+        nextCategoryUpdate -= categoryUpdate;
+        continue;
+      }
+      size_t nowIndex = indexes[nowCategory][level].front();
+      indexes[nowCategory][level].pop_front();
+      auto& question = questions[nowCategory][level][nowIndex];
+
+      question.start();
+      while (System::Update()) {
+        question.draw();
+        question.update();
+
+        if (question.timer.reachedZero())
+          break;
+
+        if (KeyQ.down()) {
+          shouldQuit = true;
+          break;
+        }
+      }
+      if (shouldQuit)
+        break;
+
+      if (question.isCorrect()) {
+        point += 10;
+        CorrectSound.playOneShot();
+        if (question.isSelected) {
+          point += 10;
+        } else {
+          point += 15;
+        }
+      } else {
+        WrongSound.playOneShot();
+        if (question.isSelected) {
+          point -= 7;
+        } else {
+          point -= 12;
+        }
+      }
+
+      Console << U"次の問題へ";
+    }
+    if (shouldQuit)
+      continue;
+
+    if (server.isHost) {
+      size_t receivedAmount = 0;
+      while (receivedAmount < server.sessionIds.size()) {
+        server.update();
+        System::Sleep(10);
+        server.receiveScore(point, receivedAmount);
+      }
+    } else {
+      server.update();
+      server.sendScore(point);
+    }
+
+    Console << U"リザルト画面";
+    // リザルト画面
+
+    while (System::Update()) {
+      if (server.isHost) {
+        server.update();
+        String rankText = U"";
+
+        if (point < 50)
+          rankText = U"文系？";
+        else if (point < 100)
+          rankText = U"ちょっと理系";
+        else if (point < 150)
+          rankText = U"まぁまぁ理系";
+        else if (point < 200)
+          rankText = U"理系";
+        else if (point < 250)
+          rankText = U"伝説の理系";
+        else
+          rankText = U"TOP OF 理系";
+
+        auto xAdvance = static_cast<int>(boldFont(U"難易度:  ").getXAdvances(50).sum());
+        boldFont(U"難易度:  ").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4), Palette::Black);
+        boldFont(GetLevelInfo(level).first).draw(50, Arg::leftCenter(Scene::Height() / 4 + xAdvance, Scene::Height() / 4), GetLevelInfo(level).second);
+        boldFont(U"スコア:  ", point).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+        boldFont(U"ランク:  ", rankText).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 3), Palette::Black);
+      } else {
+        boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+      }
     }
   }
 }
