@@ -361,9 +361,9 @@ void Main() {
           },
       },
       {
-          // programing
+          // programming language
           {
-              // programing language easy
+              // programming language easy
               Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/java.png"}},
               Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Python-Emblem.png"}},
               Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/c-gengo.png"}},
@@ -429,7 +429,7 @@ void Main() {
               Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Perl.png"}},
               Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/TypeScript.png"}},
 
-              Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/plumbobs.png"}},
+              Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/plumbob.png"}},
 
           },
       },
@@ -588,8 +588,10 @@ void Main() {
 
     Console << U"リザルト画面";
     // リザルト画面
-
     while (System::Update()) {
+      if (KeySpace.down())
+        break;
+
       if (server.isHost) {
         server.update();
         String rankText = U"";
