@@ -1,5 +1,6 @@
 #include <Siv3D.hpp>
 
+#include "Connection.hpp"
 #include "Question.hpp"
 
 // 互いに素か判定
@@ -36,10 +37,26 @@ std::pair<String, Color> GetLevelInfo(int level) {
     return std::make_pair(U"INSANE", ColorF{0.36, 0.06, 0.45});
 }
 
-void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
+// Button
+bool Button(double x, double y, double width, double height, const Font& font, const String& txt) {
+  RectF rect{Arg::center(x, y), width, height};
+  rect.rounded(15).draw(ColorF{0.25, 0.5, 0.8, 0.8});
+  rect.rounded(15).drawFrame(2, 0, Palette::White);
+
+  RectF textRect = font(txt).region();
+  double scaleFactor = Min((width * 0.8) / textRect.w, (height * 0.8) / textRect.h);
+  int fontSize = static_cast<int>(font.fontSize() * scaleFactor);
+
+  font(txt).drawAt(fontSize, x, y, Palette::White);
+
+  return rect.leftClicked();
+}
+
+void StartMenu(int& level, const Font& boldFont, const Font& regularFont2, Server& server) {
   bool start = false;
   Timer timer{Seconds{1}};
   while (System::Update()) {
+    server.update();
     if (Key1.down()) {
       level = 1;
     } else if (Key2.down()) {
@@ -82,6 +99,26 @@ void StartMenu(int& level, const Font& boldFont, const Font& regularFont2) {
   }
 }
 
+void LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
+  const auto ipAddresses = Network::EnumerateIPv4Addresses();
+  IPv4Address myIp;
+
+  for (const auto& ip : ipAddresses) {
+    if (ip != IPv4Address::Localhost()) {
+      myIp = ip;
+    }
+  }
+  while (System::Update()) {
+    server.update();
+
+    largeFont(Format(U"参加台数: ", server.sessionIds.size())).drawAt(Scene::Center(), Palette::Darkgray);
+    smallFont(Format(U"IP: "), myIp.str()).drawAt(Vec2(Scene::Center().x, Scene::Center().y + 100), Palette::Darkgray);
+    smallFont(U"Press Space To Start").drawAt(Vec2(Scene::Center().x, Scene::Center().y + 200), Palette::Darkgray);
+
+    if (KeySpace.pressed()) break;
+  }
+}
+
 void Main() {
   Scene::SetResizeMode(ResizeMode::Keep);
   Window::SetStyle(WindowStyle::Sizable);
@@ -90,6 +127,7 @@ void Main() {
   Scene::SetBackground(Palette::White);
   // 太文字のフォントを作成する | Create a bold font with MSDF method
   const Font boldFont{FontMethod::MSDF, 48, Typeface::Bold};
+  const Font smallBoldFont{FontMethod::MSDF, 24, Typeface::Bold};
   const Font regularFont1{FontMethod::MSDF, 48};          // Typeface::Regular
   const Font regularFont2{48, Typeface::CJK_Regular_JP};  // Typeface::Regular
   // テキストに含まれる絵文字のためのフォントを作成し、font に追加する | Create a font for emojis in text and add it to font as a fallback
@@ -97,9 +135,72 @@ void Main() {
   boldFont.addFallback(emojiFont);
 
   int level = 1;  // レベルの変数
+  // 通信関係
+
+  Server server;
+
+  // ここにIPアドレスとポート番号を入力
+  IPv4Address serverAddress;
+  constexpr uint16 port = 80;
+
+  while (System::Update()) {
+    // hostとしてスタート
+    const Vec2 center = Scene::Center();
+    if (Button(center.x, center.y - 50, 200, 75, regularFont1, U"Be Host")) {
+      server.startServer(port);
+      break;
+    }
+
+    // clientとしてスタート
+    if (Button(center.x, center.y + 50, 200, 75, regularFont1, U"Be Client")) {
+      TextEditState input;
+
+      while (System::Update()) {
+        SimpleGUI::TextBox(input, Vec2(Scene::Center().x - 150, Scene::Center().y - 23.5), 300);
+        if (Button(Scene::Center().x, Scene::Center().y + 100, 200, 75, smallBoldFont, U"接続")) {
+          serverAddress = IPv4Address(input.text);
+          break;
+        }
+      }
+
+      bool done = false;
+      while (System::Update()) {
+        if (server.connectToServer(serverAddress, port)) {
+          done = true;
+          break;
+        }
+        if (Button(Scene::Center().x, Scene::Center().y + 100, 200, 75, smallBoldFont, U"キャンセル")) {
+          done = false;
+          break;
+        }
+        boldFont(U"Connecting...").drawAt(Scene::Center(), Palette::Darkgray);
+        System::Sleep(10);
+      }
+      if (done) break;
+    }
+  }
 
   // スタート画面
-  StartMenu(level, boldFont, regularFont2);
+
+  if (server.isHost) {
+    LoadingMenu(server, boldFont, smallBoldFont);
+    StartMenu(level, boldFont, regularFont2, server);
+  }
+
+  if (server.isHost) {
+    server.sendStart(level);
+  } else {
+    while (System::Update()) {
+      boldFont(U"Waiting for game start...").drawAt(Scene::Center(), Palette::Darkgray);
+      if (server.receiveStart(level)) {
+        Console << U"Game start received!";
+        break;
+      }
+
+      server.update();
+      System::Sleep(10);
+    }
+  }
 
   // Audio関係
   const Audio CorrectSound = Audio(U"resources/sounds/Quiz-Correct_Answer01-1.mp3");
@@ -386,7 +487,7 @@ void Main() {
   Timer gameTimer{Seconds{90}, StartImmediately::Yes};
 
   // ゲーム画面
-  int32 point = 0;
+  ssize_t point = 0;
   size_t category = 0;
   int32 categoryUpdate = gameTimer.s() / questions.size();
   int32 nextCategoryUpdate = gameTimer.s() - categoryUpdate;
@@ -434,28 +535,46 @@ void Main() {
     Console << U"次の問題へ";
   }
 
+  if (server.isHost) {
+    size_t receivedAmount = 0;
+    while (receivedAmount < server.sessionIds.size()) {
+      server.update();
+      System::Sleep(10);
+      server.receiveScore(point, receivedAmount);
+    }
+  } else {
+    server.update();
+    server.sendScore(point);
+  }
+
   Console << U"リザルト画面";
   // リザルト画面
+
   while (System::Update()) {
-    String rankText = U"";
+    if (server.isHost) {
+      server.update();
+      String rankText = U"";
 
-    if (point < 50)
-      rankText = U"文系？";
-    else if (point < 100)
-      rankText = U"ちょっと理系";
-    else if (point < 150)
-      rankText = U"まぁまぁ理系";
-    else if (point < 200)
-      rankText = U"理系";
-    else if (point < 250)
-      rankText = U"伝説の理系";
-    else
-      rankText = U"TOP OF 理系";
+      if (point < 50)
+        rankText = U"文系？";
+      else if (point < 100)
+        rankText = U"ちょっと理系";
+      else if (point < 150)
+        rankText = U"まぁまぁ理系";
+      else if (point < 200)
+        rankText = U"理系";
+      else if (point < 250)
+        rankText = U"伝説の理系";
+      else
+        rankText = U"TOP OF 理系";
 
-    auto xAdvance = static_cast<int>(boldFont(U"難易度:  ").getXAdvances(50).sum());
-    boldFont(U"難易度:  ").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4), Palette::Black);
-    boldFont(GetLevelInfo(level).first).draw(50, Arg::leftCenter(Scene::Height() / 4 + xAdvance, Scene::Height() / 4), GetLevelInfo(level).second);
-    boldFont(U"スコア:  ", point).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
-    boldFont(U"ランク:  ", rankText).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 3), Palette::Black);
+      auto xAdvance = static_cast<int>(boldFont(U"難易度:  ").getXAdvances(50).sum());
+      boldFont(U"難易度:  ").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4), Palette::Black);
+      boldFont(GetLevelInfo(level).first).draw(50, Arg::leftCenter(Scene::Height() / 4 + xAdvance, Scene::Height() / 4), GetLevelInfo(level).second);
+      boldFont(U"スコア:  ", point).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+      boldFont(U"ランク:  ", rankText).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 3), Palette::Black);
+    } else {
+      boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+    }
   }
 }
