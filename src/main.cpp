@@ -416,7 +416,7 @@ void Main() {
               Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Perl.png"}},
               Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/TypeScript.png"}},
 
-              Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/plumbobs.png"}},
+              Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/progenLogo/plumbob.png"}},
 
           },
       },
