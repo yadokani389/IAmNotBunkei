@@ -557,7 +557,10 @@ void Main() {
         question.draw();
         question.update();
 
-        if (question.timer.reachedZero())
+        // ゲームタイマーの描画
+        Rect{5, 5, static_cast<int>(789 * gameTimer.progress1_0()), 10}.draw(Palette::Greenyellow);
+
+        if (KeyEnter.down())
           break;
 
         if (KeyQ.down()) {
@@ -566,6 +569,7 @@ void Main() {
         }
 
         {
+          // sync point and index
           auto counts = server.receivePointAndPop(point, endSession);
           for (auto& [id, count] : counts) {
             while (count != 0 && !indexes[id][level].empty()) {
@@ -582,9 +586,6 @@ void Main() {
             }
           }
         }
-
-        ClearPrint();
-        Print << point;
       }
       if (shouldQuit)
         break;
