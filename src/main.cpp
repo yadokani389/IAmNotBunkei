@@ -11,12 +11,12 @@ bool Coprime(int a, int b) {
 // 互いに異なる2つの数字を出す a, bどちらかは奇数
 std::pair<int, int> Rnd(int level) {
   int lim;
-  lim = (level + 1) * (level + 1) * 200;
+  lim = (level + 1) * 200;
   int a = Random(2, lim);
   int b = Random(2, lim);
   if (IsEven(a)) {
     while (a == b || IsEven(b)) {
-      b = Random(3, 200);
+      b = Random(lim - 180, lim);
     }
   } else {
     while (a == b) {
@@ -451,6 +451,21 @@ void Main() {
               Question{U"1以上", false, Texture{U"resources/assets/N7(not).png"}},
               Question{U"1以上", false, Texture{U"resources/assets/N8(not).png"}},
           },
+          {
+              // calculation hard
+              Question{U"1以上", true, Texture{U"resources/assets/H1.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H5.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H6.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H7.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H9.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H11.png"}},
+
+              Question{U"1以上", false, Texture{U"resources/assets/H2(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H3(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H4(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H8(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H10(not).png"}},
+          },
       }};
 
   MakeCoprimeQuestions(questions);
@@ -543,16 +558,16 @@ void Main() {
         point += 10;
         CorrectSound.playOneShot();
         if (question.isSelected) {
-          point += 10;
+          point += 5;
         } else {
           point += 15;
         }
       } else {
         WrongSound.playOneShot();
         if (question.isSelected) {
-          point -= 7;
-        } else {
           point -= 12;
+        } else {
+          point -= 15;
         }
       }
 
@@ -581,18 +596,18 @@ void Main() {
         server.update();
         String rankText = U"";
 
-        if (point < 50)
+        if (point < 70)
           rankText = U"文系？";
-        else if (point < 100)
+        else if (point < 120)
           rankText = U"ちょっと理系";
-        else if (point < 150)
+        else if (point < 170)
           rankText = U"まぁまぁ理系";
-        else if (point < 200)
+        else if (point < 220)
           rankText = U"理系";
-        else if (point < 250)
-          rankText = U"伝説の理系";
+        else if (point < 270)
+          rankText = U"理系 OF 理系";
         else
-          rankText = U"TOP OF 理系";
+          rankText = U"伝説の理系";
 
         auto xAdvance = static_cast<int>(boldFont(U"難易度:  ").getXAdvances(50).sum());
         boldFont(U"難易度:  ").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4), Palette::Black);
