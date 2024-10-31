@@ -62,8 +62,8 @@ struct Question {
       // チェックマークの描画
       Point checkCenter{rectTopLeft.x, rectTopLeft.y};
       Circle{checkCenter, 50}.draw(ColorF{0, 0.47, 0.78});
-      Line{checkCenter.movedBy(-35, -24), checkCenter.movedBy(-10, 20)}.draw(7, Palette::White);
-      Line{checkCenter.movedBy(-10, 20), checkCenter.movedBy(29, -43)}.draw(7, Palette::White);
+      Line{checkCenter.movedBy(-55, -24), checkCenter.movedBy(-10, 20)}.draw(7, Palette::White);
+      Line{checkCenter.movedBy(-10, 20), checkCenter.movedBy(60, -43)}.draw(7, Palette::White);
     }
   }
 
