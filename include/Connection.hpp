@@ -12,6 +12,13 @@ struct Server {
   // for client
   TCPClient client;
 
+  struct GameInfo {
+    bool end;
+    bool pop;
+    size_t category;
+    ssize_t deltaPoint;
+  };
+
   void startServer(uint16 port) {
     isHost = true;
     server.startAcceptMulti(port);
@@ -99,49 +106,62 @@ struct Server {
     return true;
   }
 
-  void receiveScore(size_t& score, size_t& receivedAmount) {
-    for (const auto& sessionID : sessionIds) {
-      size_t scoreBuff;
-      if (!server.read(scoreBuff, sessionID) || !(scoreBuff & (1 << 30)))
-        continue;
-      scoreBuff &= ~(1 << 30);
-      Console << U"Client: " << sessionID << U" score: " << scoreBuff;
-      score += scoreBuff;
-      receivedAmount++;
-    }
-  }
-
-  void sendScore(size_t& score) {
-    if (client.isConnected()) {
-      client.send(score | (1 << 30));
-      Console << U"Send score to Sever! Score: " << score;
+  void sendPoint(ssize_t deltaPoint) {
+    GameInfo info = {false, false, 0, deltaPoint};
+    if (isHost) {
+      for (const auto& sessionID : sessionIds)
+        if (server.hasSession(sessionID)) {
+          server.send(info, sessionID);
+          Console << U"Send score to ID: " << sessionID << U" Score: " << deltaPoint;
+        }
+    } else if (client.isConnected()) {
+      client.send(info);
+      Console << U"Send score to Sever! Score: " << deltaPoint;
     } else {
       Console << U"No connections!";
     }
   }
 
-  void sendPop() {
+  void sendPop(size_t nowCategory) {
+    GameInfo info = {false, true, nowCategory, 0};
     if (isHost)
       for (const auto& sessionID : sessionIds)
-        server.send(1ull, sessionID);
+        server.send(info, sessionID);
     else
-      client.send(1ull);
+      client.send(info);
   }
 
-  size_t receivePop() {
-    size_t pop = 0;
+  void sendEnd() {
+    GameInfo info = {true, false, 0, 0};
+    if (!isHost)
+      client.send(info);
+  }
+
+  std::map<size_t, size_t> receivePointAndPop(ssize_t& point, size_t& endSession) {
+    std::map<size_t, size_t> ret = {};
+    GameInfo info;
     if (isHost) {
       for (const auto& sessionID : sessionIds) {
-        size_t popBuff;
-        while (server.read(popBuff, sessionID))
-          pop += popBuff;
+        size_t buff;
+        while (server.read(info, sessionID)) {
+          if (info.end)
+            endSession++;
+          if (info.deltaPoint)
+            point += info.deltaPoint;
+          if (info.pop)
+            ret[info.category] += 1;
+        }
       }
     } else {
-      size_t popBuff;
-      while (client.read(popBuff))
-        pop += popBuff;
+      size_t buff;
+      while (client.read(info)) {
+        if (info.pop)
+          ret[info.category] += 1;
+        if (info.deltaPoint)
+          point += info.deltaPoint;
+      }
     }
-    return pop;
+    return ret;
   }
 
   void updateServer() {

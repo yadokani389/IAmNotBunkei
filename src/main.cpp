@@ -520,11 +520,13 @@ void Main() {
     Timer gameTimer{Seconds{90}, StartImmediately::Yes};
 
     // ゲーム画面
-    size_t point = 0;
+    ssize_t point = 0;
+    ssize_t deltaPoint = 0;
     size_t category = 0;
     const int32 categoryUpdate = gameTimer.s() / categoryIndexes.size();
     int32 nextCategoryUpdate = gameTimer.s() - categoryUpdate;
     bool shouldQuit = false;
+    size_t endSession = 0;
     while (System::Update() && !gameTimer.reachedZero() && category < categoryIndexes.size()) {
       if (gameTimer.s() < nextCategoryUpdate) {
         category++;
@@ -532,26 +534,12 @@ void Main() {
         continue;
       }
       size_t nowCategory = categoryIndexes[category];
-      if (indexes[nowCategory].size() <= level) {
+      if (indexes[nowCategory].size() <= level || indexes[nowCategory][level].empty()) {
         category++;
         nextCategoryUpdate -= categoryUpdate;
         continue;
       }
-      {
-        size_t count = server.receivePop();
-        while (count != 0 && !indexes[nowCategory][level].empty()) {
-          if (server.isHost)
-            indexes[nowCategory][level].pop_back();
-          else
-            indexes[nowCategory][level].pop_front();
-          count--;
-        }
-        if (indexes[nowCategory][level].empty()) {
-          category++;
-          nextCategoryUpdate -= categoryUpdate;
-          continue;
-        }
-      }
+
       size_t nowIndex = 0;
       if (server.isHost) {
         nowIndex = indexes[nowCategory][level].front();
@@ -560,7 +548,7 @@ void Main() {
         nowIndex = indexes[nowCategory][level].back();
         indexes[nowCategory][level].pop_back();
       }
-      server.sendPop();
+      server.sendPop(nowCategory);
       Console << nowCategory << U" " << level << U" " << nowIndex << U" " << point;
       auto& question = questions[nowCategory][level][nowIndex];
 
@@ -576,32 +564,47 @@ void Main() {
           shouldQuit = true;
           break;
         }
+
+        {
+          auto counts = server.receivePointAndPop(point, endSession);
+          for (auto& [id, count] : counts) {
+            while (count != 0 && !indexes[id][level].empty()) {
+              if (server.isHost)
+                indexes[id][level].pop_back();
+              else
+                indexes[id][level].pop_front();
+              count--;
+            }
+            if (indexes[nowCategory][level].empty()) {
+              category++;
+              nextCategoryUpdate -= categoryUpdate;
+              continue;
+            }
+          }
+        }
+
+        ClearPrint();
+        Print << point;
       }
       if (shouldQuit)
         break;
 
       if (question.isCorrect()) {
-        point += 10;
         CorrectSound.playOneShot();
-        if (question.isSelected) {
-          point += 10;
-        } else {
-          point += 15;
-        }
+        if (question.isSelected)
+          deltaPoint = 10;
+        else
+          deltaPoint = 15;
       } else {
         WrongSound.playOneShot();
-        if (question.isSelected) {
-          if (point < 7)
-            point = 0;
-          else
-            point -= 7;
-        } else {
-          if (point < 12)
-            point = 0;
-          else
-            point -= 12;
-        }
+        if (question.isSelected)
+          deltaPoint = -7;
+        else
+          deltaPoint = -12;
       }
+
+      point += deltaPoint;
+      server.sendPoint(deltaPoint);
 
       Console << U"次の問題へ";
     }
@@ -609,15 +612,14 @@ void Main() {
       continue;
 
     if (server.isHost) {
-      size_t receivedAmount = 0;
-      while (receivedAmount < server.sessionIds.size()) {
+      while (endSession < server.sessionIds.size()) {
         server.update();
         System::Sleep(10);
-        server.receiveScore(point, receivedAmount);
+        server.receivePointAndPop(point, endSession);
       }
     } else {
       server.update();
-      server.sendScore(point);
+      server.sendEnd();
     }
 
     Console << U"リザルト画面";
@@ -650,9 +652,6 @@ void Main() {
         boldFont(U"ランク:  ", rankText).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 3), Palette::Black);
       } else {
         boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
-        server.update();
-        server.sendScore(point);
-        System::Sleep(100);
       }
     }
   }
