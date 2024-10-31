@@ -119,16 +119,15 @@ void Main() {
               Question{U"存在する元素", true, U"Ne ネオン", 120},
               Question{U"存在する元素", true, U"Nb ニオブ", 120},
               Question{U"存在する元素", true, U"Nh ニホニウム", 110},
-              Question{U"存在する元素", true, U"Cf カリホルニウム", 97},
+              Question{U"存在する元素", true, U"Cf カリホルニウム", 90},
+              Question{U"存在する元素", true, U"Pr プラセオジム", 100},
 
               Question{U"存在する元素", false, U"Sr セミリウム", 120},
               Question{U"存在する元素", false, U"Cn カレニウム", 120},
               Question{U"存在する元素", false, U"Gs ガリレシウム", 100},
-              Question{U"存在する元素", false, U"Ic アイスクリウム", 120},
-              Question{U"存在する元素", false, U"N 窒素", 120},
-              Question{U"存在する元素", false, U"Na ナトリウム", 110},
-              Question{U"存在する元素", false, U"Ca カルシウム", 110},
-              Question{U"存在する元素", false, U"Al アルミニウム", 100},
+              Question{U"存在する元素", false, U"Ic アイスクリウム", 90},
+              Question{U"存在する元素", false, U"Kn カニウム", 120},
+              Question{U"存在する元素", false, U"M マメジウム", 110},
           },
           {
               // element normal
@@ -181,22 +180,22 @@ void Main() {
               Question{U"ランタノイド元素", true, U"Eu ユウロビウム", 100},
               Question{U"ランタノイド元素", true, U"Gd ガドリニウム", 100},
               Question{U"ランタノイド元素", true, U"Tb テルビウム", 110},
-              Question{U"ランタノイド元素", true, U"Dy ジスプロニウム", 97},
+              Question{U"ランタノイド元素", true, U"Dy ジスプロニウム", 85},
               Question{U"ランタノイド元素", true, U"Ho ホルミウム", 110},
               Question{U"ランタノイド元素", true, U"Er エルビウム", 110},
-              Question{U"ランタノイド元素", true, U"Er ツリウム", 120},
-              Question{U"ランタノイド元素", true, U"Yb イッテルビウム", 97},
-              Question{U"ランタノイド元素", true, U"Er ルテチウム", 110},
+              Question{U"ランタノイド元素", true, U"Tm ツリウム", 120},
+              Question{U"ランタノイド元素", true, U"Yb イッテルビウム", 85},
+              Question{U"ランタノイド元素", true, U"Lu ルテチウム", 110},
 
               Question{U"ランタノイド元素", false, U"Np ネプツニウム", 100},
               Question{U"ランタノイド元素", false, U"Am アメリシウム", 100},
-              Question{U"ランタノイド元素", false, U"Cf カリホルニウム", 97},
+              Question{U"ランタノイド元素", false, U"Cf カリホルニウム", 85},
               Question{U"ランタノイド元素", false, U"Fm フェルミウム", 100},
-              Question{U"ランタノイド元素", false, U"Lr ローレンシウム", 97},
-              Question{U"ランタノイド元素", false, U"Md メンデレビウム", 97},
+              Question{U"ランタノイド元素", false, U"Lr ローレンシウム", 75},
+              Question{U"ランタノイド元素", false, U"Md メンデレビウム", 85},
               Question{U"ランタノイド元素", false, U"Lv リバモリウム", 100},
-              Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 97},
-              Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 90},
+              Question{U"ランタノイド元素", false, U"Rf ラザホージウム", 85},
+              Question{U"ランタノイド元素", false, U"Ds ダームスタチウム", 85},
           },
       },
       {
@@ -209,7 +208,6 @@ void Main() {
               Question{U"素数", true, Texture{U"resources/assets/31.png"}},
               Question{U"素数", true, Texture{U"resources/assets/47.png"}},
               Question{U"素数", true, Texture{U"resources/assets/107.jpg"}},
-
               Question{U"素数", false, Texture{U"resources/assets/51(not).jpg"}},
               Question{U"素数", false, Texture{U"resources/assets/1(not).jpg"}},
           },
@@ -276,6 +274,38 @@ void Main() {
               Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/roblox-logo.png"}},
               Question{U"プログラミング言語のロゴ", false, Texture{U"resources/assets/overwatch-logo.png"}},
           },
+      },
+      {
+          // calculation
+          {
+              // calculation easy
+              Question{U"1以上", true, Texture{U"resources/assets/E2.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/E5.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/E6.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/E7.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/E9.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/E11.png"}},
+
+              Question{U"1以上", false, Texture{U"resources/assets/E1(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/E3(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/E4(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/E8(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/E10(not).png"}},
+          },
+          {
+              // calculation normal
+              Question{U"1以上", true, Texture{U"resources/assets/N1.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/N3.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/N4.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/N5.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/N9.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/N10.png"}},
+
+              Question{U"1以上", false, Texture{U"resources/assets/N2(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/N6(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/N7(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/N8(not).png"}},
+          },
       }};
 
   {
@@ -305,7 +335,7 @@ void Main() {
   Timer gameTimer{Seconds{90}, StartImmediately::Yes};
 
   // ゲーム画面
-  size_t point = 0;
+  int32 point = 0;
   size_t category = 0;
   int32 categoryUpdate = gameTimer.s() / questions.size();
   int32 nextCategoryUpdate = gameTimer.s() - categoryUpdate;
@@ -336,9 +366,18 @@ void Main() {
     if (question.isCorrect()) {
       point += 10;
       CorrectSound.playOneShot();
+      if (question.isSelected) {
+        point += 10;
+      } else {
+        point += 15;
+      }
     } else {
       WrongSound.playOneShot();
-      point -= 5;
+      if (question.isSelected) {
+        point -= 7;
+      } else {
+        point -= 12;
+      }
     }
 
     Console << U"次の問題へ";
