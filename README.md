@@ -7,11 +7,6 @@ nix入れたくない人はもし実行できなかったらを見てくださ�
 install [nix](https://nixos.org/)
 
 ``$``は無視してください
-```sh
-$ mkdir ~/.config/nix -p
-$ cat - > ~/.config/nix/nix.conf
-
-```
 
 IDEに設定を読み込ませたかったら
 ```sh
@@ -25,9 +20,6 @@ $ rm build -r
 この``compile_commands.json``をIDEを読み込ませる
 
 ## Build
-```sh
-$ nix build .
-```
 実行するには
 ```sh
 $ nix run .
