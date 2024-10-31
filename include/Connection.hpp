@@ -2,11 +2,6 @@
 
 #include <Siv3D.hpp>
 
-struct Message {
-  size_t id;
-  size_t element;
-};
-
 struct Server {
   bool isHost = false;
 
@@ -43,67 +38,120 @@ struct Server {
     }
   }
 
-  void sendStart(const int& level) {
-    Message message;
-    message.id = 1;
-    message.element = level;
-
+  void sendStart(const size_t& level, const Array<Array<Array<size_t>>>& indexes, const Array<size_t>& categoryIndexes) {
     for (const auto& sessionID : sessionIds) {
       if (server.hasSession(sessionID)) {
-        server.send(message, sessionID);
+        size_t sizeAll = 0;
+        sizeAll += sizeof(size_t);
+        Serializer<MemoryWriter> writer1;
+        Serializer<MemoryWriter> writer2;
+        writer1(indexes);
+        writer2(categoryIndexes);
+        sizeAll += writer1->getBlob().size();
+        sizeAll += writer2->getBlob().size();
+        Console << U"size: " << writer1->getBlob().size();
+        Console << U"size: " << writer2->getBlob().size();
+        server.send(1ull, sessionID);
+        server.send(level, sessionID);
+        server.send(writer1->getBlob().size(), sessionID);
+        server.send(writer2->getBlob().size(), sessionID);
+        server.send(writer1->getBlob().data(), writer1->getBlob().size(), sessionID);
+        server.send(writer2->getBlob().data(), writer2->getBlob().size(), sessionID);
+
         Console << U"Notified to ID: " << sessionID << U"Start level at: " << level;
+        Console << U"Category Indexes: " << categoryIndexes;
       }
     }
   }
 
-  bool receiveStart(int& level) {
-    Message message;
-    if (client.available() >= sizeof(Message)) {
-      if (client.read(message)) {
-        if (message.id == 1) {
-          level = message.element;
-          Console << U"Start Received! Level at: " << level;
-          return true;
-        }
-      }
-    }
-    return false;
+  bool receiveStart(int& level, Array<Array<Array<size_t>>>& indexes, Array<size_t>& categoryIndexes) {
+    size_t levelBuff;
+    size_t sizeAll;
+    size_t size1;
+    size_t size2;
+    Blob blob;
+    if (!client.read(sizeAll))
+      return false;
+    Console << U"Start Received!";
+    while (client.available() < sizeAll);
+
+    if (!client.read(levelBuff))
+      return false;
+    Console << U"level: " << levelBuff;
+    if (!client.read(size1))
+      return false;
+    Console << U"size1: " << size1;
+    if (!client.read(size2))
+      return false;
+    Console << U"size2: " << size2;
+    blob.resize(size1 + size2);
+    if (!client.read(blob.data(), size1 + size2))
+      return false;
+
+    level = levelBuff;
+    Deserializer<MemoryReader> reader1{blob.data(), size1};
+    reader1(indexes);
+    Deserializer<MemoryReader> reader2{blob.data() + size1, size2};
+    reader2(categoryIndexes);
+
+    Console << U"Start Received! Level at: " << level;
+    Console << U"Category Indexes: " << categoryIndexes;
+    return true;
   }
 
-  void receiveScore(ssize_t& score, size_t& receivedAmount) {
+  void receiveScore(size_t& score, size_t& receivedAmount) {
     for (const auto& sessionID : sessionIds) {
-      while (server.available(sessionID) >= sizeof(Message)) {
-        Message message;
-        if (server.read(message, sessionID) && message.id == 2) {
-          Console << U"Client: " << sessionID << U" score: " << message.element;
-          score += message.element;
-          receivedAmount++;
-        }
-      }
+      size_t scoreBuff;
+      if (!server.read(scoreBuff, sessionID) || !(scoreBuff & (1 << 30)))
+        continue;
+      scoreBuff &= ~(1 << 30);
+      Console << U"Client: " << sessionID << U" score: " << scoreBuff;
+      score += scoreBuff;
+      receivedAmount++;
     }
   }
 
-  void sendScore(ssize_t& score) {
-    Message message;
-    message.id = 2;
-    message.element = score;
-
+  void sendScore(size_t& score) {
     if (client.isConnected()) {
-      client.send(message);
+      client.send(score | (1 << 30));
       Console << U"Send score to Sever! Score: " << score;
     } else {
       Console << U"No connections!";
     }
   }
 
+  void sendPop() {
+    if (isHost)
+      for (const auto& sessionID : sessionIds)
+        server.send(1ull, sessionID);
+    else
+      client.send(1ull);
+  }
+
+  size_t receivePop() {
+    size_t pop = 0;
+    if (isHost) {
+      for (const auto& sessionID : sessionIds) {
+        size_t popBuff;
+        while (server.read(popBuff, sessionID))
+          pop += popBuff;
+      }
+    } else {
+      size_t popBuff;
+      while (client.read(popBuff))
+        pop += popBuff;
+    }
+    return pop;
+  }
+
   void updateServer() {
-    if (server.hasSession()) {
-      auto sessionIDs = server.getSessionIDs();
-      for (const auto& sessionID : sessionIDs) {
-        if (!sessionIds.includes(sessionID)) {
-          sessionIds << sessionID;
-          Console << U"New client! ID: " << sessionID;
-        }
+    if (!server.hasSession())
+      return;
+    auto sessionIDs = server.getSessionIDs();
+    for (const auto& sessionID : sessionIDs) {
+      if (!sessionIds.includes(sessionID)) {
+        sessionIds << sessionID;
+        Console << U"New client! ID: " << sessionID;
       }
     }
   }

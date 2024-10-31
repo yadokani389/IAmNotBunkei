@@ -468,11 +468,11 @@ void Main() {
 
   MakeCoprimeQuestions(questions);
 
-  Array<Array<std::deque<size_t>>> indexes;
+  Array<Array<Array<size_t>>> indexes;
   for (const auto& q : questions) {
-    Array<std::deque<size_t>> temp{q.size()};
+    Array<Array<size_t>> temp{q.size()};
     for (size_t i = 0; i < q.size(); i++) {
-      temp[i] = std::deque<size_t>(q[i].size());
+      temp[i] = Array<size_t>(q[i].size());
       std::iota(temp[i].begin(), temp[i].end(), 0);
     }
     indexes.push_back(temp);
@@ -481,7 +481,7 @@ void Main() {
   std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
   Console << categoryIndexes;
 
-  while (true) {
+  while (System::Update()) {
     // 問題の生成
     questions.pop_back();
     MakeCoprimeQuestions(questions);
@@ -498,11 +498,11 @@ void Main() {
     }
 
     if (server.isHost) {
-      server.sendStart(level);
+      server.sendStart(level, indexes, categoryIndexes);
     } else {
       while (System::Update()) {
         boldFont(U"Waiting for game start...").drawAt(Scene::Center(), Palette::Darkgray);
-        if (server.receiveStart(level)) {
+        if (server.receiveStart(level, indexes, categoryIndexes)) {
           Console << U"Game start received!";
           break;
         }
@@ -515,25 +515,48 @@ void Main() {
     Timer gameTimer{Seconds{90}, StartImmediately::Yes};
 
     // ゲーム画面
-    ssize_t point = 0;
+    size_t point = 0;
     size_t category = 0;
     const int32 categoryUpdate = gameTimer.s() / categoryIndexes.size();
     int32 nextCategoryUpdate = gameTimer.s() - categoryUpdate;
     bool shouldQuit = false;
-    while (!gameTimer.reachedZero() && category < categoryIndexes.size()) {
+    while (System::Update() && !gameTimer.reachedZero() && category < categoryIndexes.size()) {
       if (gameTimer.s() < nextCategoryUpdate) {
         category++;
         nextCategoryUpdate -= categoryUpdate;
         continue;
       }
       size_t nowCategory = categoryIndexes[category];
-      if (indexes[nowCategory].size() <= level || indexes[nowCategory][level].empty()) {
+      if (indexes[nowCategory].size() <= level) {
         category++;
         nextCategoryUpdate -= categoryUpdate;
         continue;
       }
-      size_t nowIndex = indexes[nowCategory][level].front();
-      indexes[nowCategory][level].pop_front();
+      {
+        size_t count = server.receivePop();
+        while (count != 0 && !indexes[nowCategory][level].empty()) {
+          if (server.isHost)
+            indexes[nowCategory][level].pop_back();
+          else
+            indexes[nowCategory][level].pop_front();
+          count--;
+        }
+        if (indexes[nowCategory][level].empty()) {
+          category++;
+          nextCategoryUpdate -= categoryUpdate;
+          continue;
+        }
+      }
+      size_t nowIndex = 0;
+      if (server.isHost) {
+        nowIndex = indexes[nowCategory][level].front();
+        indexes[nowCategory][level].pop_front();
+      } else {
+        nowIndex = indexes[nowCategory][level].back();
+        indexes[nowCategory][level].pop_back();
+      }
+      server.sendPop();
+      Console << nowCategory << U" " << level << U" " << nowIndex << U" " << point;
       auto& question = questions[nowCategory][level][nowIndex];
 
       question.start();
@@ -563,9 +586,15 @@ void Main() {
       } else {
         WrongSound.playOneShot();
         if (question.isSelected) {
-          point -= 7;
+          if (point < 7)
+            point = 0;
+          else
+            point -= 7;
         } else {
-          point -= 12;
+          if (point < 12)
+            point = 0;
+          else
+            point -= 12;
         }
       }
 
@@ -616,6 +645,9 @@ void Main() {
         boldFont(U"ランク:  ", rankText).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 3), Palette::Black);
       } else {
         boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+        server.update();
+        server.sendScore(point);
+        System::Sleep(100);
       }
     }
   }
