@@ -575,8 +575,10 @@ void Main() {
 
     Console << U"リザルト画面";
     // リザルト画面
-
     while (System::Update()) {
+      if (KeySpace.down())
+        break;
+
       if (server.isHost) {
         server.update();
         String rankText = U"";
