@@ -348,9 +348,9 @@ void Main() {
           },
       },
       {
-          // programing
+          // programming language
           {
-              // programing language easy
+              // programming language easy
               Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/java.png"}},
               Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/Python-Emblem.png"}},
               Question{U"プログラミング言語のロゴ", true, Texture{U"resources/assets/progenLogo/c-gengo.png"}},
