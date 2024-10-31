@@ -141,24 +141,37 @@ void Main() {
 
   // ここにIPアドレスとポート番号を入力
   IPv4Address serverAddress;
-  constexpr uint16 port = 80;
+  uint16 port = 80;
 
   while (System::Update()) {
     // hostとしてスタート
     const Vec2 center = Scene::Center();
     if (Button(center.x, center.y - 50, 200, 75, regularFont1, U"Be Host")) {
+      TextEditState inputPort;
+
+      while(System::Update()){
+        SimpleGUI::TextBox(inputPort, Vec2(Scene::Center().x - 150, Scene::Center().y - 23.5), 300);
+        if (Button(Scene::Center().x, Scene::Center().y + 100, 200, 75, smallBoldFont, U"Start")) {
+          port = Parse<uint16>(inputPort.text);
+          break;
+        }
+      }
+
       server.startServer(port);
       break;
     }
 
     // clientとしてスタート
     if (Button(center.x, center.y + 50, 200, 75, regularFont1, U"Be Client")) {
-      TextEditState input;
+      TextEditState inputAddress;
+      TextEditState inputPort;
 
       while (System::Update()) {
-        SimpleGUI::TextBox(input, Vec2(Scene::Center().x - 150, Scene::Center().y - 23.5), 300);
-        if (Button(Scene::Center().x, Scene::Center().y + 100, 200, 75, smallBoldFont, U"接続")) {
-          serverAddress = IPv4Address(input.text);
+        SimpleGUI::TextBox(inputAddress, Vec2(Scene::Center().x - 150, Scene::Center().y - 23.5), 300);
+        SimpleGUI::TextBox(inputPort,  Vec2(Scene::Center().x - 150, Scene::Center().y + 23.5), 300);
+        if (Button(Scene::Center().x, Scene::Center().y + 150, 200, 75, smallBoldFont, U"接続")) {
+          serverAddress = IPv4Address(inputAddress.text);
+          port = Parse<uint16>(inputPort.text);
           break;
         }
       }
