@@ -110,7 +110,7 @@ void StartMenu(int& level, const Font& boldFont, const Font& regularFont2, Serve
   }
 }
 
-void LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
+bool LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
   const auto ipAddresses = Network::EnumerateIPv4Addresses();
   IPv4Address myIp;
 
@@ -126,8 +126,12 @@ void LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
     smallFont(Format(U"IP: "), myIp.str()).drawAt(Vec2(Scene::Center().x, Scene::Center().y + 100), Palette::Darkgray);
     smallFont(U"Press Space To Start").drawAt(Vec2(Scene::Center().x, Scene::Center().y + 200), Palette::Darkgray);
 
-    if (KeySpace.pressed()) break;
+    if (KeySpace.pressed()) return true;
+
+    if (Button(Scene::Width() - 150, Scene::Center().y + 300, 100, 35, smallFont, U"Cancel")) return false;
   }
+
+  return false;
 }
 
 void Main() {
@@ -169,7 +173,11 @@ void Main() {
       }
 
       server.startServer(port);
-      break;
+
+      if (LoadingMenu(server, boldFont, smallBoldFont))
+        break;
+      else
+        continue;
     }
 
     // clientとしてスタート
@@ -204,9 +212,6 @@ void Main() {
         break;
     }
   }
-
-  if (server.isHost)
-    LoadingMenu(server, boldFont, smallBoldFont);
 
   // Audio関係
   const Audio CorrectSound = Audio(U"resources/sounds/Quiz-Correct_Answer01-1.mp3");
