@@ -188,4 +188,13 @@ struct Server {
     else
       updateClient();
   }
+
+  void clear() {
+    int8 buff;
+    if (isHost)
+      for (const auto& sessionID : sessionIds)
+        while (server.read(buff, sessionID));
+    else
+      while (client.read(buff));
+  }
 };

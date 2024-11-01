@@ -693,6 +693,8 @@ void Main() {
       do {
         question.draw();
         question.update();
+        // ゲームタイマーの残りを描画
+        Rect{5, 5, static_cast<int>(789 * gameTimer.progress1_0()), 10}.draw(Palette::Greenyellow);
         effect.update();
         if (question.timer.reachedZero())
           break;
@@ -795,5 +797,6 @@ void Main() {
         boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
       }
     }
+    server.clear();
   }
 }
