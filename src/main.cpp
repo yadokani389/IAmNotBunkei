@@ -146,6 +146,9 @@ bool LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
     if (KeySpace.pressed()) return true;
 
     if (Button(Scene::Width() - 100, 50, 100, 35, smallFont, U"Cancel")) return false;
+
+    if (KeyW.down())
+      Window::SetFullscreen(true);
   }
 
   return false;
@@ -645,6 +648,9 @@ void Main() {
 
         server.update();
         System::Sleep(10);
+
+        if (KeyW.down())
+          Window::SetFullscreen(true);
       }
     }
 
