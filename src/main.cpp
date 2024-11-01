@@ -46,7 +46,7 @@ void MakeCoprimeQuestions(Array<Array<Array<Question>>>& questions) {
   }
   questions.push_back(coprimeQuestions);
 }
-Change the difficulty level of disjoint problems
+
 std::pair<String, Color> GetLevelInfo(int level) {
   if (level == 0)
     return std::make_pair(U"EASY", ColorF{0.85, 0.6, 0.73});
