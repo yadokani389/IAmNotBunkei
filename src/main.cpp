@@ -717,6 +717,8 @@ void Main() {
           }
           if (indexes[nowCategory][level].empty()) {
             category++;
+            if (categoryIndexes.size() <= category)
+              break;
             nowCategory = categoryIndexes[category];
             nextCategoryUpdate -= categoryUpdate;
             continue;
