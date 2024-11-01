@@ -607,22 +607,22 @@ void Main() {
 
   MakeCoprimeQuestions(questions);
 
-  Array<Array<Array<size_t>>> indexes;
-  for (const auto& q : questions) {
-    Array<Array<size_t>> temp{q.size()};
-    for (size_t i = 0; i < q.size(); i++) {
-      temp[i] = Array<size_t>(q[i].size());
-      std::iota(temp[i].begin(), temp[i].end(), 0);
-    }
-    indexes.push_back(temp);
-  }
-  Array<size_t> categoryIndexes(questions.size());
-  std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
-
   while (System::Update()) {
     // 問題の生成
     questions.pop_back();
     MakeCoprimeQuestions(questions);
+
+    Array<Array<Array<size_t>>> indexes;
+    for (const auto& q : questions) {
+      Array<Array<size_t>> temp{q.size()};
+      for (size_t i = 0; i < q.size(); i++) {
+        temp[i] = Array<size_t>(q[i].size());
+        std::iota(temp[i].begin(), temp[i].end(), 0);
+      }
+      indexes.push_back(temp);
+    }
+    Array<size_t> categoryIndexes(questions.size());
+    std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
 
     // 問題をシャッフル
     for (auto& index : indexes)
