@@ -38,7 +38,7 @@ void MakeCoprimeQuestions(Array<Array<Array<Question>>>& questions) {
       auto [a, b] = Rnd(i);
       if (!Coprime(a, b))
         continue;
-      coprimeQuestions[i].push_back(Question{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120, SecondsF{10}});
+      coprimeQuestions[i].push_back(Question{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120});
       j++;
     }
 
@@ -47,7 +47,7 @@ void MakeCoprimeQuestions(Array<Array<Array<Question>>>& questions) {
       auto [a, b] = Rnd(i);
       if (Coprime(a, b))
         continue;
-      coprimeQuestions[i].push_back(Question{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120, SecondsF{10}});
+      coprimeQuestions[i].push_back(Question{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120});
       j++;
     }
   }
@@ -561,32 +561,32 @@ void Main() {
           },
           {
               // calculation normal
-              Question{U"1以上", true, Texture{U"resources/assets/N1.png"}, SecondsF{10}},
-              Question{U"1以上", true, Texture{U"resources/assets/N3.png"}, SecondsF{10}},
-              Question{U"1以上", true, Texture{U"resources/assets/N4.png"}, SecondsF{10}},
-              Question{U"1以上", true, Texture{U"resources/assets/N5.png"}, SecondsF{10}},
-              Question{U"1以上", true, Texture{U"resources/assets/N9.png"}, SecondsF{10}},
-              Question{U"1以上", true, Texture{U"resources/assets/N10.png"}, SecondsF{10}},
+              Question{U"1以上", true, Texture{U"resources/assets/N1.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/N3.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/N4.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/N5.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/N9.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/N10.png"}},
 
-              Question{U"1以上", false, Texture{U"resources/assets/N2(not).png"}, SecondsF{10}},
-              Question{U"1以上", false, Texture{U"resources/assets/N6(not).png"}, SecondsF{10}},
-              Question{U"1以上", false, Texture{U"resources/assets/N7(not).png"}, SecondsF{10}},
-              Question{U"1以上", false, Texture{U"resources/assets/N8(not).png"}, SecondsF{10}},
+              Question{U"1以上", false, Texture{U"resources/assets/N2(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/N6(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/N7(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/N8(not).png"}},
           },
           {
               // calculation hard
-              Question{U"1以上", true, Texture{U"resources/assets/H1.png"}, SecondsF{10}},
-              Question{U"1以上", true, Texture{U"resources/assets/H5.png"}, SecondsF{10}},
-              Question{U"1以上", true, Texture{U"resources/assets/H6.png"}, SecondsF{10}},
-              Question{U"1以上", true, Texture{U"resources/assets/H7.png"}, SecondsF{10}},
-              Question{U"1以上", true, Texture{U"resources/assets/H9.png"}, SecondsF{10}},
-              Question{U"1以上", true, Texture{U"resources/assets/H11.png"}, SecondsF{10}},
+              Question{U"1以上", true, Texture{U"resources/assets/H1.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H5.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H6.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H7.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H9.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H11.png"}},
 
-              Question{U"1以上", false, Texture{U"resources/assets/H2(not).png"}, SecondsF{10}},
-              Question{U"1以上", false, Texture{U"resources/assets/H3(not).png"}, SecondsF{10}},
-              Question{U"1以上", false, Texture{U"resources/assets/H4(not).png"}, SecondsF{10}},
-              Question{U"1以上", false, Texture{U"resources/assets/H8(not).png"}, SecondsF{10}},
-              Question{U"1以上", false, Texture{U"resources/assets/H10(not).png"}, SecondsF{10}},
+              Question{U"1以上", false, Texture{U"resources/assets/H2(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H3(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H4(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H8(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H10(not).png"}},
           },
           {
               // calculation insane
