@@ -11,9 +11,14 @@ bool Coprime(int a, int b) {
 // 互いに異なる2つの数字を出す a, bどちらかは奇数
 std::pair<int, int> Rnd(int level) {
   int lim;
-  lim = (level + 1) * 200;
+  if(level == 3){
+    lim = 9999;
+  }
+  else{
+    lim = (level + level + 1) * 150;
+  } 
   int a = Random(2, lim);
-  int b = Random(2, lim);
+  int b = Random(3, lim);
   if (IsEven(a)) {
     while (a == b || IsEven(b)) {
       b = Random(lim - 180, lim);
@@ -213,7 +218,7 @@ void Main() {
               Question{U"存在する元素", true, U"Ne ネオン", 120},
               Question{U"存在する元素", true, U"Nb ニオブ", 120},
               Question{U"存在する元素", true, U"Nh ニホニウム", 110},
-              Question{U"存在する元素", true, U"Cf カリホルニウム", 90},
+              Question{U"存在する元素", true, U"Cf カリホルニウム", 85},
               Question{U"存在する元素", true, U"Pr プラセオジム", 100},
 
               Question{U"存在する元素", false, U"Sr セミリウム", 120},
@@ -466,6 +471,21 @@ void Main() {
               Question{U"1以上", false, Texture{U"resources/assets/H8(not).png"}},
               Question{U"1以上", false, Texture{U"resources/assets/H10(not).png"}},
           },
+          {
+              // calculation insane
+              Question{U"未解決問題", true, U"ビール予想",100},
+              Question{U"式を満たすpが,10以下", true, Texture{U"resources/assets/I5.png"}},
+              Question{U"解がe⁶", true, Texture{U"resources/assets/I6.png"}},
+              Question{U"式を満たす最小の自然数mが,m>10", true, U"m≡4(mod5)かつm≡1(mod2)",50},
+              Question{U"既に証明済み", true, U"素数は無限個存在する",60},
+              Question{U"近似値が1以上", false, Texture{U"resources/assets/I9.png"}},
+
+              Question{U"未解決問題", false, U"円積問題",100},
+              Question{U"解がe", false, Texture{U"resources/assets/I8(not).png"}},
+              Question{U"既に証明済み", false, U"双子素数は無限個存在する",60},
+              Question{U"式を満たす実数Mが,M>1700", false, U"904³¹⁹ ≡ M(mod2627)", 60},
+              Question{U"既に証明済み", false, Texture{U"resources/assets/I7(not).png"}},
+          },
       }};
 
   MakeCoprimeQuestions(questions);
@@ -555,10 +575,9 @@ void Main() {
         break;
 
       if (question.isCorrect()) {
-        point += 10;
         CorrectSound.playOneShot();
         if (question.isSelected) {
-          point += 5;
+          point += 10;
         } else {
           point += 15;
         }
