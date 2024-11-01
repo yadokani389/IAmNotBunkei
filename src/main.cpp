@@ -11,12 +11,11 @@ bool Coprime(int a, int b) {
 // 互いに異なる2つの数字を出す a, bどちらかは奇数
 std::pair<int, int> Rnd(int level) {
   int lim;
-  if(level == 3){
+  if (level == 3) {
     lim = 9999;
-  }
-  else{
+  } else {
     lim = (level + level + 1) * 150;
-  } 
+  }
   int a = Random(2, lim);
   int b = Random(3, lim);
   if (IsEven(a)) {
@@ -473,16 +472,16 @@ void Main() {
           },
           {
               // calculation insane
-              Question{U"未解決問題", true, U"ビール予想",100},
+              Question{U"未解決問題", true, U"ビール予想", 100},
               Question{U"式を満たすpが,10以下", true, Texture{U"resources/assets/I5.png"}},
               Question{U"解がe⁶", true, Texture{U"resources/assets/I6.png"}},
-              Question{U"式を満たす最小の自然数mが,m>10", true, U"m≡4(mod5)かつm≡1(mod2)",50},
-              Question{U"既に証明済み", true, U"素数は無限個存在する",60},
+              Question{U"式を満たす最小の自然数mが,m>10", true, U"m≡4(mod5)かつm≡1(mod2)", 50},
+              Question{U"既に証明済み", true, U"素数は無限個存在する", 60},
               Question{U"近似値が1以上", false, Texture{U"resources/assets/I9.png"}},
 
-              Question{U"未解決問題", false, U"円積問題",100},
+              Question{U"未解決問題", false, U"円積問題", 100},
               Question{U"解がe", false, Texture{U"resources/assets/I8(not).png"}},
-              Question{U"既に証明済み", false, U"双子素数は無限個存在する",60},
+              Question{U"既に証明済み", false, U"双子素数は無限個存在する", 60},
               Question{U"式を満たす実数Mが,M>1700", false, U"904³¹⁹ ≡ M(mod2627)", 60},
               Question{U"既に証明済み", false, Texture{U"resources/assets/I7(not).png"}},
           },
@@ -577,7 +576,7 @@ void Main() {
       if (question.isCorrect()) {
         CorrectSound.playOneShot();
         if (question.isSelected) {
-          point += 10;
+          point += 7;
         } else {
           point += 15;
         }
@@ -615,15 +614,15 @@ void Main() {
         server.update();
         String rankText = U"";
 
-        if (point < 70)
+        if (point < 50)
           rankText = U"文系？";
-        else if (point < 120)
+        else if (point < 100)
           rankText = U"ちょっと理系";
-        else if (point < 170)
+        else if (point < 150)
           rankText = U"まぁまぁ理系";
-        else if (point < 220)
+        else if (point < 200)
           rankText = U"理系";
-        else if (point < 270)
+        else if (point < 250)
           rankText = U"理系 OF 理系";
         else
           rankText = U"伝説の理系";
