@@ -33,9 +33,22 @@ std::pair<int, int> Rnd(int level) {
 void MakeCoprimeQuestions(Array<Array<Array<Question>>>& questions) {
   Array<Array<Question>> coprimeQuestions{4};
   for (size_t i = 0; i < 4; i++) {
-    for (size_t j = 0; j < 20; j++) {
+    size_t j = 0;
+    while (j < 10) {
       auto [a, b] = Rnd(i);
+      if (!Coprime(a, b))
+        continue;
       coprimeQuestions[i].push_back(Question{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120});
+      j++;
+    }
+
+    j = 0;
+    while (j < 10) {
+      auto [a, b] = Rnd(i);
+      if (Coprime(a, b))
+        continue;
+      coprimeQuestions[i].push_back(Question{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120});
+      j++;
     }
   }
   questions.push_back(coprimeQuestions);
@@ -150,9 +163,9 @@ struct ScoreEffect : IEffect {
   bool update(double t) override {
     Color color;
     String txt = Format(m_score);
-    if (m_score < 0){
+    if (m_score < 0) {
       color = HSV(Random(0.0, 360.0), Random(0.3, 0.6), 0.5).toColor();
-    }else{
+    } else {
       txt = U"+" + Format(m_score);
       color = HSV(Random(0.0, 360.0), Random(0.6, 1.0), 0.8).toColor();
     }
@@ -613,7 +626,7 @@ void Main() {
       for (auto& i : index)
         Shuffle(i.begin(), i.end());
     Shuffle(categoryIndexes.begin(), categoryIndexes.end());
-      Console << categoryIndexes;
+    Console << categoryIndexes;
 
     // スタート画面
     if (server.isHost) {
