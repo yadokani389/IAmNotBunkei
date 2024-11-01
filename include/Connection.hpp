@@ -49,7 +49,7 @@ struct Server {
     for (const auto& sessionID : sessionIds) {
       if (server.hasSession(sessionID)) {
         size_t sizeAll = 0;
-        sizeAll += sizeof(size_t);
+        sizeAll += 3 * sizeof(size_t);
         Serializer<MemoryWriter> writer1;
         Serializer<MemoryWriter> writer2;
         writer1(indexes);
@@ -58,7 +58,7 @@ struct Server {
         sizeAll += writer2->getBlob().size();
         Console << U"size: " << writer1->getBlob().size();
         Console << U"size: " << writer2->getBlob().size();
-        server.send(1ull, sessionID);
+        server.send(sizeAll, sessionID);
         server.send(level, sessionID);
         server.send(writer1->getBlob().size(), sessionID);
         server.send(writer2->getBlob().size(), sessionID);
@@ -187,5 +187,14 @@ struct Server {
       updateServer();
     else
       updateClient();
+  }
+
+  void clear() {
+    int8 buff;
+    if (isHost)
+      for (const auto& sessionID : sessionIds)
+        while (server.read(buff, sessionID));
+    else
+      while (client.read(buff));
   }
 };

@@ -11,12 +11,16 @@ bool Coprime(int a, int b) {
 // 互いに異なる2つの数字を出す a, bどちらかは奇数
 std::pair<int, int> Rnd(int level) {
   int lim;
-  lim = (level + 1) * (level + 1) * 200;
+  if (level == 3) {
+    lim = 9999;
+  } else {
+    lim = (level + level + 1) * 150;
+  }
   int a = Random(2, lim);
-  int b = Random(2, lim);
+  int b = Random(3, lim);
   if (IsEven(a)) {
     while (a == b || IsEven(b)) {
-      b = Random(3, 200);
+      b = Random(lim - 180, lim);
     }
   } else {
     while (a == b) {
@@ -29,9 +33,22 @@ std::pair<int, int> Rnd(int level) {
 void MakeCoprimeQuestions(Array<Array<Array<Question>>>& questions) {
   Array<Array<Question>> coprimeQuestions{4};
   for (size_t i = 0; i < 4; i++) {
-    for (size_t j = 0; j < 20; j++) {
+    size_t j = 0;
+    while (j < 10) {
       auto [a, b] = Rnd(i);
+      if (!Coprime(a, b))
+        continue;
       coprimeQuestions[i].push_back(Question{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120});
+      j++;
+    }
+
+    j = 0;
+    while (j < 10) {
+      auto [a, b] = Rnd(i);
+      if (Coprime(a, b))
+        continue;
+      coprimeQuestions[i].push_back(Question{U"互いに素", Coprime(a, b), U"{} と {}"_fmt(a, b), 120});
+      j++;
     }
   }
   questions.push_back(coprimeQuestions);
@@ -128,11 +145,95 @@ bool LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
 
     if (KeySpace.pressed()) return true;
 
-    if (Button(Scene::Width() - 150, Scene::Center().y + 300, 100, 35, smallFont, U"Cancel")) return false;
+    if (Button(Scene::Width() - 100, 50, 100, 35, smallFont, U"Cancel")) return false;
+
+    if (KeyW.down())
+      Window::SetFullscreen(true);
   }
 
   return false;
 }
+struct ScoreEffect : IEffect {
+  Vec2 m_start;
+
+  int32 m_score;
+
+  Font m_font;
+
+  ScoreEffect(const Vec2& start, int32 score, const Font& font)
+      : m_start{start}, m_score{score}, m_font{font} {}
+
+  bool update(double t) override {
+    Color color;
+    String txt = Format(m_score);
+    if (m_score < 0) {
+      color = HSV(Random(0.0, 360.0), Random(0.3, 0.6), 0.5).toColor();
+    } else {
+      txt = U"+" + Format(m_score);
+      color = HSV(Random(0.0, 360.0), Random(0.6, 1.0), 0.8).toColor();
+    }
+    m_font(txt).drawAt(m_start.movedBy(0, t * -120), color);
+    return (t < 0.5);
+  }
+};
+
+struct SelectEffect : IEffect {
+  struct Bubble {
+    Vec2 offset;
+    double startTime;
+    double scale;
+    ColorF color;
+    bool correct;
+  };
+  Vec2 pos;
+
+  Array<Bubble> bubbles;
+
+  SelectEffect(const Vec2& pos, bool correct)
+      : pos{pos} {
+    for (int32 i = 0; i < 20; ++i) {
+      Bubble bubble{
+          .offset = RandomVec2(Circle{30}),
+          .startTime = Random(-0.3, 0.3),
+          .scale = Random(0.2, 2.5),
+          .correct = correct,
+      };
+      bubbles << bubble;
+    }
+  }
+
+  bool update(double t) override {
+    for (const auto& bubble : bubbles) {
+      const double t2 = (bubble.startTime + t);
+
+      if (not InRange(t2, 0.0, 1.0)) {
+        continue;
+      }
+
+      Color color = HSV(Random(0.0, 360.0), Random(0.3, 0.6), 1.0).toColor();
+
+      const double e = EaseOutExpo(t2);
+
+      if (bubble.correct) {
+        Circle{(pos + bubble.offset + (bubble.offset * 10 * t)), (e * 40 * bubble.scale)}.draw(ColorF{color, 0.15}).drawFrame((30.0 * (1.0 - e) * bubble.scale), color);
+
+      } else {
+        Vec2 center = pos + bubble.offset + (bubble.offset * 10 * t);
+
+        double size = e * 40 * bubble.scale;
+
+        double thickness = 60.0 * (1.0 - e) * bubble.scale;
+
+        Line{center - Vec2(size, size), center + Vec2(size, size)}
+            .draw(thickness, color);
+        Line{center + Vec2(size, -size), center + Vec2(-size, size)}
+            .draw(thickness, color);
+      }
+    }
+
+    return (t < 1.3);
+  }
+};
 
 void Main() {
   Scene::SetResizeMode(ResizeMode::Keep);
@@ -148,6 +249,9 @@ void Main() {
   // テキストに含まれる絵文字のためのフォントを作成し、font に追加する | Create a font for emojis in text and add it to font as a fallback
   const Font emojiFont{48, Typeface::ColorEmoji};
   boldFont.addFallback(emojiFont);
+  // Effect関係
+  Effect effect;
+  const Font effectFont{FontMethod::MSDF, 96, Typeface::Bold};
 
   int level = 0;  // レベルの変数
   // 通信関係
@@ -231,7 +335,7 @@ void Main() {
               Question{U"存在する元素", true, U"Ne ネオン", 120},
               Question{U"存在する元素", true, U"Nb ニオブ", 120},
               Question{U"存在する元素", true, U"Nh ニホニウム", 110},
-              Question{U"存在する元素", true, U"Cf カリホルニウム", 90},
+              Question{U"存在する元素", true, U"Cf カリホルニウム", 85},
               Question{U"存在する元素", true, U"Pr プラセオジム", 100},
 
               Question{U"存在する元素", false, U"Sr セミリウム", 120},
@@ -469,33 +573,63 @@ void Main() {
               Question{U"1以上", false, Texture{U"resources/assets/N7(not).png"}},
               Question{U"1以上", false, Texture{U"resources/assets/N8(not).png"}},
           },
+          {
+              // calculation hard
+              Question{U"1以上", true, Texture{U"resources/assets/H1.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H5.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H6.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H7.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H9.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/H11.png"}},
+
+              Question{U"1以上", false, Texture{U"resources/assets/H2(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H3(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H4(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H8(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/H10(not).png"}},
+          },
+          {
+              // calculation insane
+              Question{U"未解決問題", true, U"ビール予想", 100},
+              Question{U"式を満たすpが,10以下", true, Texture{U"resources/assets/I5.png"}},
+              Question{U"解がe⁶", true, Texture{U"resources/assets/I6.png"}},
+              Question{U"式を満たす最小の自然数mが,m>10", true, U"m≡4(mod5)かつm≡1(mod2)", 50},
+              Question{U"既に証明済み", true, U"素数は無限個存在する", 60},
+              Question{U"近似値が1以上", false, Texture{U"resources/assets/I9.png"}},
+
+              Question{U"未解決問題", false, U"円積問題", 100},
+              Question{U"解がe", false, Texture{U"resources/assets/I8(not).png"}},
+              Question{U"既に証明済み", false, U"双子素数は無限個存在する", 60},
+              Question{U"式を満たす実数Mが,M>1700", false, U"904³¹⁹ ≡ M(mod2627)", 60},
+              Question{U"既に証明済み", false, Texture{U"resources/assets/I7(not).png"}},
+          },
       }};
 
   MakeCoprimeQuestions(questions);
-
-  Array<Array<Array<size_t>>> indexes;
-  for (const auto& q : questions) {
-    Array<Array<size_t>> temp{q.size()};
-    for (size_t i = 0; i < q.size(); i++) {
-      temp[i] = Array<size_t>(q[i].size());
-      std::iota(temp[i].begin(), temp[i].end(), 0);
-    }
-    indexes.push_back(temp);
-  }
-  Array<size_t> categoryIndexes(questions.size());
-  std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
-  Console << categoryIndexes;
 
   while (System::Update()) {
     // 問題の生成
     questions.pop_back();
     MakeCoprimeQuestions(questions);
 
+    Array<Array<Array<size_t>>> indexes;
+    for (const auto& q : questions) {
+      Array<Array<size_t>> temp{q.size()};
+      for (size_t i = 0; i < q.size(); i++) {
+        temp[i] = Array<size_t>(q[i].size());
+        std::iota(temp[i].begin(), temp[i].end(), 0);
+      }
+      indexes.push_back(temp);
+    }
+    Array<size_t> categoryIndexes(questions.size());
+    std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
+
     // 問題をシャッフル
     for (auto& index : indexes)
       for (auto& i : index)
         Shuffle(i.begin(), i.end());
     Shuffle(categoryIndexes.begin(), categoryIndexes.end());
+    Console << categoryIndexes;
 
     // スタート画面
     if (server.isHost) {
@@ -514,6 +648,9 @@ void Main() {
 
         server.update();
         System::Sleep(10);
+
+        if (KeyW.down())
+          Window::SetFullscreen(true);
       }
     }
 
@@ -553,14 +690,13 @@ void Main() {
       auto& question = questions[nowCategory][level][nowIndex];
 
       question.start();
-      while (System::Update()) {
+      do {
         question.draw();
         question.update();
-
-        // ゲームタイマーの描画
+        // ゲームタイマーの残りを描画
         Rect{5, 5, static_cast<int>(789 * gameTimer.progress1_0()), 10}.draw(Palette::Greenyellow);
-
-        if (KeyEnter.down())
+        effect.update();
+        if (question.timer.reachedZero())
           break;
 
         if (KeyQ.down()) {
@@ -579,24 +715,30 @@ void Main() {
                 indexes[id][level].pop_front();
               count--;
             }
-            if (indexes[nowCategory][level].empty()) {
-              category++;
-              nextCategoryUpdate -= categoryUpdate;
-              continue;
-            }
+          }
+          if (indexes[nowCategory][level].empty()) {
+            category++;
+            if (categoryIndexes.size() <= category)
+              break;
+            nowCategory = categoryIndexes[category];
+            nextCategoryUpdate -= categoryUpdate;
+            continue;
           }
         }
-      }
+      } while (System::Update());
+
       if (shouldQuit)
         break;
 
       if (question.isCorrect()) {
+        effect.add<SelectEffect>(Scene::Center(), true);
         CorrectSound.playOneShot();
         if (question.isSelected)
           deltaPoint = 10;
         else
           deltaPoint = 15;
       } else {
+        effect.add<SelectEffect>(Scene::Center(), false);
         WrongSound.playOneShot();
         if (question.isSelected)
           deltaPoint = -7;
@@ -606,11 +748,13 @@ void Main() {
 
       point += deltaPoint;
       server.sendPoint(deltaPoint);
-
+      effect.add<ScoreEffect>(Scene::Center(), deltaPoint, effectFont);
       Console << U"次の問題へ";
     }
-    if (shouldQuit)
+    if (shouldQuit) {
+      server.clear();
       continue;
+    }
 
     if (server.isHost) {
       while (endSession < server.sessionIds.size()) {
@@ -642,9 +786,9 @@ void Main() {
         else if (point < 200)
           rankText = U"理系";
         else if (point < 250)
-          rankText = U"伝説の理系";
+          rankText = U"理系 OF 理系";
         else
-          rankText = U"TOP OF 理系";
+          rankText = U"伝説の理系";
 
         auto xAdvance = static_cast<int>(boldFont(U"難易度:  ").getXAdvances(50).sum());
         boldFont(U"難易度:  ").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4), Palette::Black);
@@ -655,5 +799,6 @@ void Main() {
         boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
       }
     }
+    server.clear();
   }
 }
