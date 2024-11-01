@@ -146,9 +146,6 @@ bool LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
     if (KeySpace.pressed()) return true;
 
     if (Button(Scene::Width() - 100, 50, 100, 35, smallFont, U"Cancel")) return false;
-
-    if (KeyW.down())
-      Window::SetFullscreen(true);
   }
 
   return false;
@@ -546,32 +543,31 @@ void Main() {
           // calculation
           {
               // calculation easy
-              Question{U"1以上", true, Texture{U"resources/assets/E2.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/E5.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/E6.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/E7.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/E9.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/E11.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NewE1.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NewE2.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NeWE3.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NeWE4.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NeWE5.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NewE6.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NewE7.png"}},
 
-              Question{U"1以上", false, Texture{U"resources/assets/E1(not).png"}},
-              Question{U"1以上", false, Texture{U"resources/assets/E3(not).png"}},
-              Question{U"1以上", false, Texture{U"resources/assets/E4(not).png"}},
-              Question{U"1以上", false, Texture{U"resources/assets/E8(not).png"}},
-              Question{U"1以上", false, Texture{U"resources/assets/E10(not).png"}},
+              Question{U"10以上", false, Texture{U"resources/assets/NewE8(not).png"}},
+              Question{U"10以上", false, Texture{U"resources/assets/NewE9(not).png"}},
+              Question{U"10以上", false, Texture{U"resources/assets/NewE10(not).png"}},
           },
           {
               // calculation normal
               Question{U"1以上", true, Texture{U"resources/assets/N1.png"}},
               Question{U"1以上", true, Texture{U"resources/assets/N3.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/N4.png"}},
               Question{U"1以上", true, Texture{U"resources/assets/N5.png"}},
               Question{U"1以上", true, Texture{U"resources/assets/N9.png"}},
               Question{U"1以上", true, Texture{U"resources/assets/N10.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/E5.png"}},
 
               Question{U"1以上", false, Texture{U"resources/assets/N2(not).png"}},
               Question{U"1以上", false, Texture{U"resources/assets/N6(not).png"}},
-              Question{U"1以上", false, Texture{U"resources/assets/N7(not).png"}},
               Question{U"1以上", false, Texture{U"resources/assets/N8(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/E8(not).png"}},
           },
           {
               // calculation hard
@@ -595,7 +591,7 @@ void Main() {
               Question{U"解がe⁶", true, Texture{U"resources/assets/I6.png"}},
               Question{U"式を満たす最小の自然数mが,m>10", true, U"m≡4(mod5)かつm≡1(mod2)", 50},
               Question{U"既に証明済み", true, U"素数は無限個存在する", 60},
-              Question{U"近似値が1以上", false, Texture{U"resources/assets/I9.png"}},
+              Question{U"近似値が1以上", true, Texture{U"resources/assets/I9.png"}},
 
               Question{U"未解決問題", false, U"円積問題", 100},
               Question{U"解がe", false, Texture{U"resources/assets/I8(not).png"}},
@@ -607,22 +603,22 @@ void Main() {
 
   MakeCoprimeQuestions(questions);
 
+  Array<Array<Array<size_t>>> indexes;
+  for (const auto& q : questions) {
+    Array<Array<size_t>> temp{q.size()};
+    for (size_t i = 0; i < q.size(); i++) {
+      temp[i] = Array<size_t>(q[i].size());
+      std::iota(temp[i].begin(), temp[i].end(), 0);
+    }
+    indexes.push_back(temp);
+  }
+  Array<size_t> categoryIndexes(questions.size());
+  std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
+
   while (System::Update()) {
     // 問題の生成
     questions.pop_back();
     MakeCoprimeQuestions(questions);
-
-    Array<Array<Array<size_t>>> indexes;
-    for (const auto& q : questions) {
-      Array<Array<size_t>> temp{q.size()};
-      for (size_t i = 0; i < q.size(); i++) {
-        temp[i] = Array<size_t>(q[i].size());
-        std::iota(temp[i].begin(), temp[i].end(), 0);
-      }
-      indexes.push_back(temp);
-    }
-    Array<size_t> categoryIndexes(questions.size());
-    std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
 
     // 問題をシャッフル
     for (auto& index : indexes)
@@ -648,9 +644,6 @@ void Main() {
 
         server.update();
         System::Sleep(10);
-
-        if (KeyW.down())
-          Window::SetFullscreen(true);
       }
     }
 
@@ -693,8 +686,6 @@ void Main() {
       do {
         question.draw();
         question.update();
-        // ゲームタイマーの残りを描画
-        Rect{5, 5, static_cast<int>(789 * gameTimer.progress1_0()), 10}.draw(Palette::Greenyellow);
         effect.update();
         if (question.timer.reachedZero())
           break;
@@ -717,13 +708,14 @@ void Main() {
           }
           if (indexes[nowCategory][level].empty()) {
             category++;
-            if (categoryIndexes.size() <= category)
-              break;
             nowCategory = categoryIndexes[category];
             nextCategoryUpdate -= categoryUpdate;
             continue;
           }
         }
+
+        ClearPrint();
+        Print << point;
       } while (System::Update());
 
       if (shouldQuit)
@@ -735,25 +727,24 @@ void Main() {
         if (question.isSelected)
           deltaPoint = 10;
         else
-          deltaPoint = 15;
+          deltaPoint = 22;
       } else {
         effect.add<SelectEffect>(Scene::Center(), false);
         WrongSound.playOneShot();
         if (question.isSelected)
           deltaPoint = -7;
         else
-          deltaPoint = -12;
+          deltaPoint = -7;
       }
 
       point += deltaPoint;
       server.sendPoint(deltaPoint);
       effect.add<ScoreEffect>(Scene::Center(), deltaPoint, effectFont);
+      effect.update();
       Console << U"次の問題へ";
     }
-    if (shouldQuit) {
-      server.clear();
+    if (shouldQuit)
       continue;
-    }
 
     if (server.isHost) {
       while (endSession < server.sessionIds.size()) {
@@ -798,6 +789,5 @@ void Main() {
         boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
       }
     }
-    server.clear();
   }
 }
