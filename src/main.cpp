@@ -148,10 +148,74 @@ struct ScoreEffect : IEffect {
       : m_start{start}, m_score{score}, m_font{font} {}
 
   bool update(double t) override {
-    Color color(Palette::Red);
-    if (m_score < 0) color = Color(Palette::Blue);
-    m_font(m_score).drawAt(m_start.movedBy(0, t * -120), color);
+    Color color;
+    String txt = Format(m_score);
+    if (m_score < 0){
+      color = HSV(Random(0.0, 360.0), Random(0.3, 0.6), 0.5).toColor();
+    }else{
+      txt = U"+" + Format(m_score);
+      color = HSV(Random(0.0, 360.0), Random(0.6, 1.0), 0.8).toColor();
+    }
+    m_font(txt).drawAt(m_start.movedBy(0, t * -120), color);
     return (t < 0.5);
+  }
+};
+
+struct SelectEffect : IEffect {
+  struct Bubble {
+    Vec2 offset;
+    double startTime;
+    double scale;
+    ColorF color;
+    bool correct;
+  };
+  Vec2 pos;
+
+  Array<Bubble> bubbles;
+
+  SelectEffect(const Vec2& pos, bool correct)
+      : pos{pos} {
+    for (int32 i = 0; i < 20; ++i) {
+      Bubble bubble{
+          .offset = RandomVec2(Circle{30}),
+          .startTime = Random(-0.3, 0.3),
+          .scale = Random(0.2, 2.5),
+          .correct = correct,
+      };
+      bubbles << bubble;
+    }
+  }
+
+  bool update(double t) override {
+    for (const auto& bubble : bubbles) {
+      const double t2 = (bubble.startTime + t);
+
+      if (not InRange(t2, 0.0, 1.0)) {
+        continue;
+      }
+
+      Color color = HSV(Random(0.0, 360.0), Random(0.3, 0.6), 1.0).toColor();
+
+      const double e = EaseOutExpo(t2);
+
+      if (bubble.correct) {
+        Circle{(pos + bubble.offset + (bubble.offset * 10 * t)), (e * 40 * bubble.scale)}.draw(ColorF{color, 0.15}).drawFrame((30.0 * (1.0 - e) * bubble.scale), color);
+
+      } else {
+        Vec2 center = pos + bubble.offset + (bubble.offset * 10 * t);
+
+        double size = e * 40 * bubble.scale;
+
+        double thickness = 60.0 * (1.0 - e) * bubble.scale;
+
+        Line{center - Vec2(size, size), center + Vec2(size, size)}
+            .draw(thickness, color);
+        Line{center + Vec2(size, -size), center + Vec2(-size, size)}
+            .draw(thickness, color);
+      }
+    }
+
+    return (t < 1.3);
   }
 };
 
@@ -538,7 +602,6 @@ void Main() {
   }
   Array<size_t> categoryIndexes(questions.size());
   std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
-  Console << categoryIndexes;
 
   while (System::Update()) {
     // 問題の生成
@@ -550,6 +613,7 @@ void Main() {
       for (auto& i : index)
         Shuffle(i.begin(), i.end());
     Shuffle(categoryIndexes.begin(), categoryIndexes.end());
+      Console << categoryIndexes;
 
     // スタート画面
     if (server.isHost) {
@@ -607,7 +671,7 @@ void Main() {
       auto& question = questions[nowCategory][level][nowIndex];
 
       question.start();
-      while (System::Update()) {
+      do {
         question.draw();
         question.update();
         effect.update();
@@ -632,6 +696,7 @@ void Main() {
           }
           if (indexes[nowCategory][level].empty()) {
             category++;
+            nowCategory = categoryIndexes[category];
             nextCategoryUpdate -= categoryUpdate;
             continue;
           }
@@ -639,17 +704,20 @@ void Main() {
 
         ClearPrint();
         Print << point;
-      }
+      } while (System::Update());
+
       if (shouldQuit)
         break;
 
       if (question.isCorrect()) {
+        effect.add<SelectEffect>(Scene::Center(), true);
         CorrectSound.playOneShot();
         if (question.isSelected)
           deltaPoint = 10;
         else
           deltaPoint = 15;
       } else {
+        effect.add<SelectEffect>(Scene::Center(), false);
         WrongSound.playOneShot();
         if (question.isSelected)
           deltaPoint = -7;
