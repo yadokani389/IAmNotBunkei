@@ -14,19 +14,12 @@ std::pair<int, int> Rnd(int level) {
   if (level == 3) {
     lim = 9999;
   } else {
-    lim = (level + level + 1) * 150;
+    lim = (level + 1) * (level + 2) * 10;
   }
   int a = Random(2, lim);
   int b = Random(3, lim);
-  if (IsEven(a)) {
-    while (a == b || IsEven(b)) {
-      b = Random(lim - 180, lim);
-    }
-  } else {
-    while (a == b) {
-      b = Random(lim - 180, lim);
-    }
-  }
+  while (IsEven(a) == IsEven(b))
+    b = Random(std::max(2, lim - 180), lim);
   return std::make_pair(a, b);
 }
 
@@ -53,7 +46,7 @@ void MakeCoprimeQuestions(Array<Array<Array<Question>>>& questions) {
   }
   questions.push_back(coprimeQuestions);
 }
-
+Change the difficulty level of disjoint problems
 std::pair<String, Color> GetLevelInfo(int level) {
   if (level == 0)
     return std::make_pair(U"EASY", ColorF{0.85, 0.6, 0.73});
