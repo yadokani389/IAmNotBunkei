@@ -3,19 +3,21 @@
 #include <Siv3D.hpp>
 
 struct Question {
-  Question(const String& _question, bool _answer, const String& _string, double _stringSize)
+  Question(const String& _question, bool _answer, const String& _string, double _stringSize, SecondsF _limit = SecondsF{5})
       : question(_question),
         answer(_answer),
         string(_string),
         stringSize(_stringSize),
         mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
-        subFont(Font{FontMethod::MSDF, 48}) {}
-  Question(const String& _question, bool _answer, const Texture& _texture)
+        subFont(Font{FontMethod::MSDF, 48}),
+        limit{_limit} {}
+  Question(const String& _question, bool _answer, const Texture& _texture, SecondsF _limit = SecondsF{5})
       : question(_question),
         answer(_answer),
         texture(_texture.resized(400)),
         mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
-        subFont(Font{FontMethod::MSDF, 48}) {}
+        subFont(Font{FontMethod::MSDF, 48}),
+        limit{_limit} {}
 
   const String question;
   const bool answer;
@@ -26,7 +28,8 @@ struct Question {
   const Font subFont;
   bool isSelected = false;
   int changeSize = 0;
-  Timer timer{SecondsF{10}, StartImmediately::No};
+  SecondsF limit = SecondsF{5};
+  Timer timer{limit, StartImmediately::No};
 
   inline void draw() const {
     int textureSize = 1;
@@ -67,7 +70,7 @@ struct Question {
   }
 
   inline void start() {
-    timer.setRemaining(SecondsF{10});
+    timer.setRemaining(limit);
     timer.start();
     isSelected = false;
   }
