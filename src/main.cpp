@@ -741,7 +741,6 @@ void Main() {
       point += deltaPoint;
       server.sendPoint(deltaPoint);
       effect.add<ScoreEffect>(Scene::Center(), deltaPoint, effectFont);
-      effect.update();
       Console << U"次の問題へ";
     }
     if (shouldQuit)
