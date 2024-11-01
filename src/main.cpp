@@ -595,11 +595,11 @@ void Main() {
                 indexes[id][level].pop_front();
               count--;
             }
-            if (indexes[nowCategory][level].empty()) {
-              category++;
-              nextCategoryUpdate -= categoryUpdate;
-              continue;
-            }
+          }
+          if (indexes[nowCategory][level].empty()) {
+            category++;
+            nextCategoryUpdate -= categoryUpdate;
+            continue;
           }
         }
 
