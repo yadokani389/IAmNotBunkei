@@ -722,9 +722,6 @@ void Main() {
             continue;
           }
         }
-
-        ClearPrint();
-        Print << point;
       } while (System::Update());
 
       if (shouldQuit)
@@ -751,8 +748,10 @@ void Main() {
       effect.add<ScoreEffect>(Scene::Center(), deltaPoint, effectFont);
       Console << U"次の問題へ";
     }
-    if (shouldQuit)
+    if (shouldQuit) {
+      server.clear();
       continue;
+    }
 
     if (server.isHost) {
       while (endSession < server.sessionIds.size()) {
