@@ -73,11 +73,11 @@ bool Button(double x, double y, double width, double height, const Font& font, c
   return rect.leftClicked();
 }
 
-void StartMenu(int& level, const Font& boldFont, const Font& regularFont2, Server& server) {
+void StartMenu(int& level, const Font& boldFont, const Font& regularFont2 /*, Server& server*/) {
   bool start = false;
   Timer timer{Seconds{1}};
   while (System::Update()) {
-    server.update();
+    // server.update();
     if (Key1.down()) {
       level = 0;
     } else if (Key2.down()) {
@@ -184,11 +184,12 @@ struct SelectEffect : IEffect {
 
   SelectEffect(const Vec2& pos, bool correct)
       : pos{pos} {
+    // for (int32 i = 0; i < 20; ++i) {
     for (int32 i = 0; i < 20; ++i) {
       Bubble bubble{
-          .offset = RandomVec2(Circle{30}),
+          .offset = RandomVec2(Circle{10}),
           .startTime = Random(-0.3, 0.3),
-          .scale = Random(0.2, 2.5),
+          .scale = Random(0.2, 1.0),
           .correct = correct,
       };
       bubbles << bubble;
@@ -249,6 +250,7 @@ void Main() {
   int level = 0;  // レベルの変数
   // 通信関係
 
+  /*
   Server server;
 
   // ここにIPアドレスとポート番号を入力
@@ -309,13 +311,11 @@ void Main() {
         break;
     }
   }
+  */
 
   // Audio関係
   const Audio CorrectSound = Audio(U"resources/sounds/Quiz-Correct_Answer01-1.mp3");
   const Audio WrongSound = Audio(U"resources/sounds/Quiz-Wrong_Buzzer02-2.mp3");
-  // for mac
-  // const Audio CorrectSound = Audio(U"engine/resources/sounds/Quiz-Correct_Answer01-1.mp3");
-  // const Audio WrongSound = Audio(U"engine/resources/sounds/Quiz-Wrong_Buzzer02-2.mp3");
 
   Array<Array<Array<Question>>> questions = {
       {
@@ -598,6 +598,14 @@ void Main() {
           },
       }};
 
+  Array<Vec2> drawPos{
+      Vec2(175, 300),
+      Vec2(400, 300),
+      Vec2(625, 300),
+      Vec2(175, 500),
+      Vec2(400, 500),
+      Vec2(625, 500),
+  };
   MakeCoprimeQuestions(questions);
 
   while (System::Update()) {
@@ -625,10 +633,11 @@ void Main() {
     Console << categoryIndexes;
 
     // スタート画面
-    if (server.isHost) {
-      StartMenu(level, boldFont, regularFont2, server);
-    }
+    /* if (server.isHost) { */
+    StartMenu(level, boldFont, regularFont2 /*server*/);
+    /*}*/
 
+    /*
     if (server.isHost) {
       server.sendStart(level, indexes, categoryIndexes);
     } else {
@@ -646,6 +655,7 @@ void Main() {
           Window::SetFullscreen(true);
       }
     }
+    */
 
     Timer gameTimer{Seconds{90}, StartImmediately::Yes};
 
@@ -657,20 +667,41 @@ void Main() {
     int32 nextCategoryUpdate = gameTimer.s() - categoryUpdate;
     bool shouldQuit = false;
     size_t endSession = 0;
-    while (System::Update() && !gameTimer.reachedZero() && category < categoryIndexes.size()) {
+
+    Array<Array<Question>> questions4Solo;
+
+    for (size_t categoryIndex = 0; categoryIndex < categoryIndexes.size(); categoryIndex++) {
+      Array<Question> tmp;
+      size_t nowCategory = categoryIndexes[categoryIndex];
+      for (size_t nowIndex = 0; nowIndex < 6; nowIndex++) {
+        tmp.push_back(questions[nowCategory][level][indexes[nowCategory][level][nowIndex]]);
+      }
+      questions4Solo.push_back(tmp);
+    }
+
+    while (System::Update() && /*!gameTimer.reachedZero() &&*/ category < categoryIndexes.size()) {
+      /*
       if (gameTimer.s() < nextCategoryUpdate) {
         category++;
         nextCategoryUpdate -= categoryUpdate;
         continue;
       }
-      size_t nowCategory = categoryIndexes[category];
+      */
+
+      // size_t nowCategory = categoryIndexes[category];
+      /*
       if (indexes[nowCategory].size() <= level || indexes[nowCategory][level].empty()) {
         category++;
         nextCategoryUpdate -= categoryUpdate;
         continue;
       }
+      */
 
-      size_t nowIndex = 0;
+      // size_t nowIndex = 0;
+
+      Array<Question> &currentQuestions = questions4Solo[category];
+
+      /*
       if (server.isHost) {
         nowIndex = indexes[nowCategory][level].front();
         indexes[nowCategory][level].pop_front();
@@ -681,22 +712,42 @@ void Main() {
       server.sendPop(nowCategory);
       Console << nowCategory << U" " << level << U" " << nowIndex << U" " << point;
       auto& question = questions[nowCategory][level][nowIndex];
+      */
 
-      question.start();
-      do {
-        question.draw();
-        question.update();
-        // ゲームタイマーの残りを描画
-        Rect{5, 5, static_cast<int>(789 * gameTimer.progress1_0()), 10}.draw(Palette::Greenyellow);
+      for (auto& question : currentQuestions) {
+        question.start();
         effect.update();
-        if (question.timer.reachedZero())
+      }
+
+      do {
+        {
+          size_t questionIndex = 0;
+          for (auto& question : currentQuestions) {
+            effect.update();
+            question.draw(drawPos[questionIndex]);
+            effect.update();
+            question.update(drawPos[questionIndex]);
+            questionIndex++;
+          }
+        }
+        // ゲームタイマーの残りを描画
+        /*
+        Rect{5, 5, static_cast<int>(789 * gameTimer.progress1_0()), 10}.draw(Palette::Greenyellow);
+        */
+
+        // if (question.timer.reachedZero())
+        //  break;
+
+        if (Button(Scene::Width() - 100, Scene::Height() - 50, 100, 35, smallBoldFont, U"認証")) {
           break;
+        }
 
         if (KeyQ.down()) {
           shouldQuit = true;
           break;
         }
 
+        /*
         {
           // sync point and index
           auto counts = server.receivePointAndPop(point, endSession);
@@ -718,37 +769,49 @@ void Main() {
             continue;
           }
         }
+        */
       } while (System::Update());
 
       if (shouldQuit)
         break;
+      {
+        size_t questionIndex = 0;
+        for (auto& question : currentQuestions) {
+          if (question.isCorrect()) {
+            effect.add<SelectEffect>(drawPos[questionIndex], true);
+            // CorrectSound.playOneShot();
+            if (question.isSelected)
+              deltaPoint = 10;
+            else
+              deltaPoint = 15;
+          } else {
+            effect.add<SelectEffect>(drawPos[questionIndex], false);
+            // WrongSound.playOneShot();
+            if (question.isSelected)
+              deltaPoint = -7;
+            else
+              deltaPoint = -12;
+          }
 
-      if (question.isCorrect()) {
-        effect.add<SelectEffect>(Scene::Center(), true);
-        CorrectSound.playOneShot();
-        if (question.isSelected)
-          deltaPoint = 10;
-        else
-          deltaPoint = 15;
-      } else {
-        effect.add<SelectEffect>(Scene::Center(), false);
-        WrongSound.playOneShot();
-        if (question.isSelected)
-          deltaPoint = -7;
-        else
-          deltaPoint = -12;
+          effect.update();
+          point += deltaPoint;
+          questionIndex++;
+        }
       }
 
-      point += deltaPoint;
-      server.sendPoint(deltaPoint);
-      effect.add<ScoreEffect>(Scene::Center(), deltaPoint, effectFont);
+      // point += deltaPoint;
+      // server.sendPoint(deltaPoint);
+      // effect.add<ScoreEffect>(Scene::Center(), deltaPoint, effectFont);
       Console << U"次の問題へ";
+      category++;
     }
+
     if (shouldQuit) {
-      server.clear();
+      // server.clear();
       continue;
     }
 
+    /*
     if (server.isHost) {
       while (endSession < server.sessionIds.size()) {
         server.update();
@@ -759,39 +822,41 @@ void Main() {
       server.update();
       server.sendEnd();
     }
+    */
 
     Console << U"リザルト画面";
     // リザルト画面
     while (System::Update()) {
+      effect.update();
       if (KeySpace.down())
         break;
 
-      if (server.isHost) {
-        server.update();
-        String rankText = U"";
+      // if (server.isHost) {
+      //   server.update();
+      String rankText = U"";
 
-        if (point < 50)
-          rankText = U"文系？";
-        else if (point < 100)
-          rankText = U"ちょっと理系";
-        else if (point < 150)
-          rankText = U"まぁまぁ理系";
-        else if (point < 200)
-          rankText = U"理系";
-        else if (point < 250)
-          rankText = U"理系 OF 理系";
-        else
-          rankText = U"伝説の理系";
+      if (point < 50)
+        rankText = U"文系？";
+      else if (point < 100)
+        rankText = U"ちょっと理系";
+      else if (point < 150)
+        rankText = U"まぁまぁ理系";
+      else if (point < 200)
+        rankText = U"理系";
+      else if (point < 250)
+        rankText = U"理系 OF 理系";
+      else
+        rankText = U"伝説の理系";
 
-        auto xAdvance = static_cast<int>(boldFont(U"難易度:  ").getXAdvances(50).sum());
-        boldFont(U"難易度:  ").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4), Palette::Black);
-        boldFont(GetLevelInfo(level).first).draw(50, Arg::leftCenter(Scene::Height() / 4 + xAdvance, Scene::Height() / 4), GetLevelInfo(level).second);
-        boldFont(U"スコア:  ", point).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
-        boldFont(U"ランク:  ", rankText).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 3), Palette::Black);
-      } else {
-        boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
-      }
+      auto xAdvance = static_cast<int>(boldFont(U"難易度:  ").getXAdvances(50).sum());
+      boldFont(U"難易度:  ").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4), Palette::Black);
+      boldFont(GetLevelInfo(level).first).draw(50, Arg::leftCenter(Scene::Height() / 4 + xAdvance, Scene::Height() / 4), GetLevelInfo(level).second);
+      boldFont(U"スコア:  ", point).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+      boldFont(U"ランク:  ", rankText).draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 3), Palette::Black);
+      //} else {
+      //  boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
+      //}
     }
-    server.clear();
+    // server.clear();
   }
 }

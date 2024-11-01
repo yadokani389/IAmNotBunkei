@@ -9,13 +9,15 @@ struct Question {
         string(_string),
         stringSize(_stringSize),
         mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
-        subFont(Font{FontMethod::MSDF, 48}) {}
+        subFont(Font{FontMethod::MSDF, 48}),
+        soloFont(Font{FontMethod::MSDF, 48, Typeface::Bold}) {}
   Question(const String& _question, bool _answer, const Texture& _texture)
       : question(_question),
         answer(_answer),
         texture(_texture.resized(400)),
         mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
-        subFont(Font{FontMethod::MSDF, 48}) {}
+        subFont(Font{FontMethod::MSDF, 48}),
+        soloFont(Font{FontMethod::MSDF, 48, Typeface::Bold}) {}
 
   const String question;
   const bool answer;
@@ -24,24 +26,36 @@ struct Question {
   const TextureRegion texture;
   const Font mainFont;
   const Font subFont;
+  const Font soloFont;
   bool isSelected = false;
   int changeSize = 0;
   Timer timer{SecondsF{10}, StartImmediately::No};
 
-  inline void draw() const {
-    int textureSize = 1;
+  inline void draw(const Vec2& center) const {
+    double textureSize = 1.0 / 2.0;
+    double soloStringSize = 35.0;
+
     // 青い四角を描く | Draw a rectangle
-    Rect{5, 5, 789, 180}.draw(HSV{220, 0.8, 0.9});
+
     // 残り時間を描く | Draw the remaining time
-    mainFont(timer.s()).draw(60, 670, 50, Palette::White);
+    // mainFont(timer.s()).draw(60, 670, 50, Palette::White);
+
     // 指定した範囲内にテキストを描く | Draw text within a specified area
-    mainFont(question).draw(45, Vec2{30, 35}, Palette::White);
-    subFont(U"の画像をすべて選択してください").draw(25, Vec2{30, 110}, Palette::White);
+
+    // 変えない
+
+    if (center == Vec2(175, 300)) {
+      Rect{5, 5, 789, 180}.draw(HSV{220, 0.8, 0.9});
+      mainFont(question).draw(45, Vec2{30, 35}, Palette::White);
+      subFont(U"の画像をすべて選択してください").draw(25, Vec2{30, 110}, Palette::White);
+    }
+    //
 
     if (string.isEmpty()) {
-      texture.scaled(textureSize - (changeSize * 0.01)).draw(Arg::center(400, 390));
+      texture.scaled(textureSize - (changeSize * 0.01)).draw(Arg::center(center));
     } else {
-      mainFont(string).draw(stringSize - changeSize, Arg::center(400, 390), Palette::Black);
+      // mainFont(string).draw(stringSize - changeSize, Arg::center(center), Palette::Black);
+      soloFont(string).draw(soloStringSize - changeSize, Arg::center(center), Palette::Black);
     }
 
     // 選択した際の描画処理
@@ -50,12 +64,12 @@ struct Question {
       Point rectTopLeft;
       if (string.isEmpty()) {
         Rect rect{texture.scaled(textureSize - (changeSize * 0.01)).size.asPoint()};
-        rect.setCenter(400, 390).draw(ColorF{0.5, 0.5, 0.5, 0.5});
+        rect.setCenter(center.x, center.y).draw(ColorF{0.5, 0.5, 0.5, 0.5});
         rectTopLeft = rect.tl();
       } else {
-        const auto textRegion = mainFont(string).region(stringSize - changeSize);
+        const auto textRegion = soloFont(string).region(soloStringSize - changeSize);
         Rect rect{static_cast<int>(textRegion.w) + 7, static_cast<int>(textRegion.h) + 7};
-        rect.setCenter(400, 390).draw(ColorF{0.5, 0.5, 0.5, 0.5});
+        rect.setCenter(center.x, center.y).draw(ColorF{0.5, 0.5, 0.5, 0.5});
         rectTopLeft = rect.tl();
       }
       // チェックマークの描画
@@ -67,17 +81,29 @@ struct Question {
   }
 
   inline void start() {
-    timer.setRemaining(SecondsF{10});
-    timer.start();
+    // timer.setRemaining(SecondsF{10});
+    // timer.start();
     isSelected = false;
   }
 
-  inline void update() {
-    if (KeyEnter.down()) {
-      isSelected = true;
-      changeSize = 10;
-      if (0.7 < timer.sF())
-        timer.setRemaining(SecondsF{0.7});
+  inline void update(const Vec2& center) {
+    if (MouseL.down()) {
+      const Vec2 mousePos = Cursor::Pos();
+
+      RectF clickableArea;
+      if (string.isEmpty()) {
+        clickableArea = texture.scaled(1.0 / 2.0 - (changeSize * 0.01)).region().setCenter(center.x, center.y);
+      } else {
+        const auto textRegion = soloFont(string).region(35.0 - changeSize);
+        clickableArea = RectF(static_cast<int>(textRegion.w) + 20, static_cast<int>(textRegion.h) + 20).setCenter(center.x, center.y);
+      }
+
+      if (clickableArea.leftClicked()) {
+        isSelected = !isSelected;
+        changeSize = isSelected ? 10 : 0;
+        // if (0.7 < timer.sF())
+        //     timer.setRemaining(SecondsF{0.7});
+      }
     }
   }
 
