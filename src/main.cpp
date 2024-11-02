@@ -747,7 +747,7 @@ void Main() {
       effect.update();
       Console << U"次の問題へ";
     }
-    if (shouldQuit) {
+    if (shouldQuit) 
       server.clear();
 
     if (server.isHost) {
@@ -796,3 +796,4 @@ void Main() {
     server.clear();
   }
 }
+
