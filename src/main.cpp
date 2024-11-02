@@ -24,7 +24,7 @@ std::pair<int, int> Rnd(int level) {
 }
 
 void MakeCoprimeQuestions(Array<Array<Array<Question>>>& questions) {
-  Array<Array<Question>> coprimeQuestions{4};
+  Array<Array<Question>> coprimeQuestions(4);
   for (size_t i = 0; i < 4; i++) {
     size_t j = 0;
     while (j < 10) {
