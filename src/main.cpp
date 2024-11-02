@@ -147,6 +147,8 @@ bool LoadingMenu(Server& server, const Font& largeFont, const Font& smallFont) {
 
     if (Button(Scene::Width() - 100, 50, 100, 35, smallFont, U"Cancel")) return false;
   }
+  if (KeyW.down())
+    Window::SetFullscreen(true);
 
   return false;
 }
@@ -603,15 +605,6 @@ void Main() {
 
   MakeCoprimeQuestions(questions);
 
-  Array<Array<Array<size_t>>> indexes;
-  for (const auto& q : questions) {
-    Array<Array<size_t>> temp{q.size()};
-    for (size_t i = 0; i < q.size(); i++) {
-      temp[i] = Array<size_t>(q[i].size());
-      std::iota(temp[i].begin(), temp[i].end(), 0);
-    }
-    indexes.push_back(temp);
-  }
   Array<size_t> categoryIndexes(questions.size());
   std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
 
@@ -619,6 +612,16 @@ void Main() {
     // 問題の生成
     questions.pop_back();
     MakeCoprimeQuestions(questions);
+
+    Array<Array<Array<size_t>>> indexes;
+    for (const auto& q : questions) {
+      Array<Array<size_t>> temp{q.size()};
+      for (size_t i = 0; i < q.size(); i++) {
+        temp[i] = Array<size_t>(q[i].size());
+        std::iota(temp[i].begin(), temp[i].end(), 0);
+      }
+      indexes.push_back(temp);
+    }
 
     // 問題をシャッフル
     for (auto& index : indexes)
@@ -644,6 +647,9 @@ void Main() {
 
         server.update();
         System::Sleep(10);
+
+        if (KeyW.down())
+          Window::SetFullscreen(true);
       }
     }
 
@@ -686,6 +692,8 @@ void Main() {
       do {
         question.draw();
         question.update();
+        // ゲームタイマーの残りを描画
+        Rect{5, 5, static_cast<int>(789 * gameTimer.progress1_0()), 10}.draw(Palette::Greenyellow);
         effect.update();
         if (question.timer.reachedZero())
           break;
@@ -708,6 +716,8 @@ void Main() {
           }
           if (indexes[nowCategory][level].empty()) {
             category++;
+            if (categoryIndexes.size() <= category)
+              break;
             nowCategory = categoryIndexes[category];
             nextCategoryUpdate -= categoryUpdate;
             continue;
@@ -743,8 +753,8 @@ void Main() {
       effect.update();
       Console << U"次の問題へ";
     }
-    if (shouldQuit)
-      continue;
+    if (shouldQuit) {
+      server.clear();
 
     if (server.isHost) {
       while (endSession < server.sessionIds.size()) {
@@ -789,5 +799,6 @@ void Main() {
         boldFont(U"Thanks for playing").draw(50, Arg::leftCenter(Scene::Height() / 4, Scene::Height() / 4 * 2), Palette::Black);
       }
     }
+    server.clear();
   }
 }
