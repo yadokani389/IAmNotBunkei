@@ -718,8 +718,8 @@ void Main() {
           }
         }
 
-        ClearPrint();
-        Print << point;
+        //ClearPrint();
+        //Print << point;
       } while (System::Update());
 
       if (shouldQuit)
