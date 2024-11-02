@@ -10,14 +10,16 @@ struct Question {
         stringSize(_stringSize),
         mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
         subFont(Font{FontMethod::MSDF, 48}),
-        soloFont(Font{FontMethod::MSDF, 48, Typeface::Bold}) {}
+        soloFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
+        first(true) {}
   Question(const String& _question, bool _answer, const Texture& _texture)
       : question(_question),
         answer(_answer),
         texture(_texture.resized(400)),
         mainFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
         subFont(Font{FontMethod::MSDF, 48}),
-        soloFont(Font{FontMethod::MSDF, 48, Typeface::Bold}) {}
+        soloFont(Font{FontMethod::MSDF, 48, Typeface::Bold}),
+        first(true) {}
 
   const String question;
   const bool answer;
@@ -29,11 +31,14 @@ struct Question {
   const Font soloFont;
   bool isSelected = false;
   int changeSize = 0;
+  RectF clickableArea;
   Timer timer{SecondsF{10}, StartImmediately::No};
+  mutable bool first;
+  
 
   inline void draw(const Vec2& center) const {
     double textureSize = 1.0 / 2.0;
-    double soloStringSize = 35.0;
+    double soloStringSize = 32.0;
 
     // 青い四角を描く | Draw a rectangle
 
@@ -94,12 +99,14 @@ struct Question {
     if (MouseL.down()) {
       const Vec2 mousePos = Cursor::Pos();
 
-      RectF clickableArea;
-      if (string.isEmpty()) {
-        clickableArea = texture.scaled(1.0 / 2.0 - (changeSize * 0.01)).region().setCenter(center.x, center.y);
-      } else {
-        const auto textRegion = soloFont(string).region(35.0 - changeSize);
-        clickableArea = RectF(static_cast<int>(textRegion.w) + 20, static_cast<int>(textRegion.h) + 20).setCenter(center.x, center.y);
+      if (first) {
+        if (string.isEmpty()) {
+          clickableArea = texture.scaled(1.0 / 2.0 - (changeSize * 0.01)).region().setCenter(center.x, center.y);
+        } else {
+          const auto textRegion = soloFont(string).region(32.0 - changeSize);
+          clickableArea = RectF(static_cast<int>(textRegion.w) + 20, static_cast<int>(textRegion.h) + 20).setCenter(center.x, center.y);
+        }
+        first = false;
       }
 
       if (clickableArea.leftClicked()) {

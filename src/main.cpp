@@ -24,7 +24,7 @@ std::pair<int, int> Rnd(int level) {
 }
 
 void MakeCoprimeQuestions(Array<Array<Array<Question>>>& questions) {
-  Array<Array<Question>> coprimeQuestions{4};
+  Array<Array<Question>> coprimeQuestions(4);
   for (size_t i = 0; i < 4; i++) {
     size_t j = 0;
     while (j < 10) {
@@ -539,32 +539,31 @@ void Main() {
           // calculation
           {
               // calculation easy
-              Question{U"1以上", true, Texture{U"resources/assets/E2.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/E5.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/E6.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/E7.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/E9.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/E11.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NewE1.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NewE2.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NeWE3.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NeWE4.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NeWE5.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NewE6.png"}},
+              Question{U"10以上", true, Texture{U"resources/assets/NewE7.png"}},
 
-              Question{U"1以上", false, Texture{U"resources/assets/E1(not).png"}},
-              Question{U"1以上", false, Texture{U"resources/assets/E3(not).png"}},
-              Question{U"1以上", false, Texture{U"resources/assets/E4(not).png"}},
-              Question{U"1以上", false, Texture{U"resources/assets/E8(not).png"}},
-              Question{U"1以上", false, Texture{U"resources/assets/E10(not).png"}},
+              Question{U"10以上", false, Texture{U"resources/assets/NewE8(not).png"}},
+              Question{U"10以上", false, Texture{U"resources/assets/NewE9(not).png"}},
+              Question{U"10以上", false, Texture{U"resources/assets/NewE10(not).png"}},
           },
           {
               // calculation normal
               Question{U"1以上", true, Texture{U"resources/assets/N1.png"}},
               Question{U"1以上", true, Texture{U"resources/assets/N3.png"}},
-              Question{U"1以上", true, Texture{U"resources/assets/N4.png"}},
               Question{U"1以上", true, Texture{U"resources/assets/N5.png"}},
               Question{U"1以上", true, Texture{U"resources/assets/N9.png"}},
               Question{U"1以上", true, Texture{U"resources/assets/N10.png"}},
+              Question{U"1以上", true, Texture{U"resources/assets/E5.png"}},
 
               Question{U"1以上", false, Texture{U"resources/assets/N2(not).png"}},
               Question{U"1以上", false, Texture{U"resources/assets/N6(not).png"}},
-              Question{U"1以上", false, Texture{U"resources/assets/N7(not).png"}},
               Question{U"1以上", false, Texture{U"resources/assets/N8(not).png"}},
+              Question{U"1以上", false, Texture{U"resources/assets/E8(not).png"}},
           },
           {
               // calculation hard
@@ -588,7 +587,7 @@ void Main() {
               Question{U"解がe⁶", true, Texture{U"resources/assets/I6.png"}},
               Question{U"式を満たす最小の自然数mが,m>10", true, U"m≡4(mod5)かつm≡1(mod2)", 50},
               Question{U"既に証明済み", true, U"素数は無限個存在する", 60},
-              Question{U"近似値が1以上", false, Texture{U"resources/assets/I9.png"}},
+              Question{U"近似値が1以上", true, Texture{U"resources/assets/I9.png"}},
 
               Question{U"未解決問題", false, U"円積問題", 100},
               Question{U"解がe", false, Texture{U"resources/assets/I8(not).png"}},
@@ -699,7 +698,7 @@ void Main() {
 
       // size_t nowIndex = 0;
 
-      Array<Question> &currentQuestions = questions4Solo[category];
+      Array<Question>& currentQuestions = questions4Solo[category];
 
       /*
       if (server.isHost) {
@@ -725,6 +724,13 @@ void Main() {
           for (auto& question : currentQuestions) {
             effect.update();
             question.draw(drawPos[questionIndex]);
+            questionIndex++;
+          }
+        }
+
+        {
+          size_t questionIndex = 0;
+          for (auto& question : currentQuestions) {
             effect.update();
             question.update(drawPos[questionIndex]);
             questionIndex++;
@@ -738,7 +744,7 @@ void Main() {
         // if (question.timer.reachedZero())
         //  break;
 
-        if (Button(Scene::Width() - 100, Scene::Height() - 50, 100, 35, smallBoldFont, U"認証")) {
+        if (Button(Scene::Width() - 25, Scene::Height() - 50, 75, 35, smallBoldFont, U"認証")) {
           break;
         }
 
@@ -775,9 +781,12 @@ void Main() {
       if (shouldQuit)
         break;
       {
+
+        size_t correctCount = 0;
         size_t questionIndex = 0;
         for (auto& question : currentQuestions) {
           if (question.isCorrect()) {
+            correctCount++;
             effect.add<SelectEffect>(drawPos[questionIndex], true);
             // CorrectSound.playOneShot();
             if (question.isSelected)
@@ -792,11 +801,13 @@ void Main() {
             else
               deltaPoint = -12;
           }
-
           effect.update();
           point += deltaPoint;
           questionIndex++;
         }
+
+        if(correctCount == 6) CorrectSound.playOneShot();
+        else WrongSound.playOneShot();
       }
 
       // point += deltaPoint;
