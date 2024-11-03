@@ -605,12 +605,13 @@ void Main() {
       Vec2(400, 500),
       Vec2(625, 500),
   };
-  MakeCoprimeQuestions(questions);
+  // MakeCoprimeQuestions(questions);
+  Stopwatch sw(StartImmediately::Yes);
 
   while (System::Update()) {
     // 問題の生成
-    questions.pop_back();
-    MakeCoprimeQuestions(questions);
+    // questions.pop_back();
+    // MakeCoprimeQuestions(questions);
 
     Array<Array<Array<size_t>>> indexes;
     for (const auto& q : questions) {
@@ -780,8 +781,8 @@ void Main() {
 
       if (shouldQuit)
         break;
-      {
 
+      {
         size_t correctCount = 0;
         size_t questionIndex = 0;
         for (auto& question : currentQuestions) {
@@ -806,8 +807,21 @@ void Main() {
           questionIndex++;
         }
 
-        if(correctCount == 6) CorrectSound.playOneShot();
-        else WrongSound.playOneShot();
+        if (correctCount == 6)
+          CorrectSound.playOneShot();
+        else
+          WrongSound.playOneShot();
+      }
+
+      while(System::Update() && !effect.isEmpty()) {
+        {
+          size_t questionIndex = 0;
+          for (auto& question : currentQuestions) {
+            question.draw(drawPos[questionIndex]);
+            questionIndex++;
+            effect.update();
+          }
+        }
       }
 
       // point += deltaPoint;
