@@ -596,15 +596,15 @@ void Main() {
           },
       }};
 
-  MakeCoprimeQuestions(questions);
+  //MakeCoprimeQuestions(questions);
 
   Array<size_t> categoryIndexes(questions.size());
   std::iota(categoryIndexes.begin(), categoryIndexes.end(), 0);
 
   while (System::Update()) {
     // 問題の生成
-    questions.pop_back();
-    MakeCoprimeQuestions(questions);
+    //questions.pop_back();
+    //MakeCoprimeQuestions(questions);
 
     Array<Array<Array<size_t>>> indexes;
     for (const auto& q : questions) {
